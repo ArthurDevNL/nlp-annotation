@@ -25,6 +25,12 @@ class App extends React.Component {
         }
     }
 
+    componentDidMount() {
+        this.setState({
+            selectedToken: this.state.tokens[0]
+        });
+    }
+
     handleTokenSelect(token) {
         console.log('selected token', token);
         this.setState(
@@ -38,6 +44,7 @@ class App extends React.Component {
             <div className="App">
                 <NavigationBar 
                     tokens={tokens} 
+                    selectedToken={this.state.selectedToken}
                     onTokenSelect={this.handleTokenSelect} 
                 />
     

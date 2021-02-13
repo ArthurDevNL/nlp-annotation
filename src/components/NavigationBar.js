@@ -13,7 +13,7 @@ class NavigationBar extends React.Component {
     render() {
         const tokenList = this.props.tokens.map(token => {
             return(
-                <button className="token" key={token.id} onClick={e => this.selectToken(e, token)}>{token.label}</button>
+                <button className={"token" + (this.props.selectedToken && this.props.selectedToken.id === token.id ? ' active' : '')} key={token.id} onClick={e => this.selectToken(e, token)}>{token.label}</button>
             );
         });
         return (
