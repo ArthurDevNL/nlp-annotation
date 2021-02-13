@@ -1,4 +1,9 @@
-# Getting Started with Create React App
+
+Deployment Status: [![Netlify Status](https://api.netlify.com/api/v1/badges/a047848f-4e9b-488c-9652-a807be76996e/deploy-status)](https://app.netlify.com/sites/nlp-7703/deploys)
+
+Live: https://nlp-7703.netlify.app/
+
+# Getting Started
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
