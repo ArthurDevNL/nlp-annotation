@@ -1,6 +1,6 @@
 import React from "react";
 import Konva from "konva";
-import { Stage, Layer, Group, Rect, Text, Circle, Line } from "react-konva";
+import { Stage, Layer, Group, Rect, Text, Circle, Line, Arrow } from "react-konva";
 
 class TextTree extends React.Component {
     constructor(props) {
@@ -47,7 +47,38 @@ class TextTree extends React.Component {
             // proceed connect the line
             // update text editor -- event
             // reset selected
+            console.log('index from', this.state.selected[0]);
+            console.log('index to', this.state.selected[1])
+            const from = this.layerRef.current.children[this.state.selected[0] - 1];
+            const to = this.layerRef.current.children[this.state.selected[1]- 1];
+
+            this.createArc(from, to, {label: 'Root'});
+            this.setState({
+                selected: []
+            });
         }
+    }
+
+    /**
+     * Create arrow
+     * @param {Group} from 
+     * @param {Group} to
+     * @param {Object} token // need its label only
+     */
+    createArc(from, to, token) {
+        console.log('createArc', from.children[2]);
+        let originalPoints = [...from.children[2].attrs.points];
+        console.log('to.x()', to.children[2].attrs.x);
+        originalPoints[4] = to.children[2].attrs.x;
+        originalPoints[6] = to.children[2].attrs.x;
+        // from.children[2].points(originalPoints);
+
+        from.children[2].attrs.points[4] = to.children[2].attrs.x;
+        from.children[2].attrs.points[6] = to.children[2].attrs.x;
+        
+        console.log(originalPoints);
+        from.children[2].opacity(1);
+        this.layerRef.current.batchDraw();
     }
 
     onMouseOver(e, index) {
@@ -73,9 +104,9 @@ class TextTree extends React.Component {
         if (this.layerRef.current) {
             this.layerRef.current.children.forEach((group, index) => {
                 if (this.state.selected.includes(index + 1)) {
-                    group.children[1].fill("#ffffff");
+                    group.children[2].fill("#ffffff");
                 } else {
-                    group.children[1].fill("#343434");
+                    group.children[2].fill("#343434");
                 }
             })
         }
@@ -97,6 +128,7 @@ class TextTree extends React.Component {
                     {this.words.map((word, index) => {
                         index += 1;
                         const rectLength = word.length === 1 ? word.length * 22 : word.length * 16.18;
+                        const rectHeight = 48;
                         const gutter = 20;
                         
                         const xPosition = totalTreeLength + gutter;
@@ -107,7 +139,7 @@ class TextTree extends React.Component {
                             <Group 
                                 ref={this.groupRef}
                                 onClick={(e) => this.wordClick(e, index)}
-                                draggable={true}
+                                draggable={false}
                                 align="center"
                                 onMouseOver={e => this.onMouseOver(e, index)}
                                 onMouseLeave={e => this.onMouseLeave(e, index)}
@@ -139,6 +171,19 @@ class TextTree extends React.Component {
 
                                     align="center"
                                     fontSize={18} />
+                                <Arrow
+                                    x={xPosition}
+                                    y={yPosition}
+                                    points={[
+                                        rectLength/2, rectHeight/(rectHeight * -1 / 2),
+                                        rectLength/2, -50, 
+                                        rectLength*1.5, -50, 
+                                        rectLength*1.5, rectHeight/(rectHeight * -1 / 2)
+                                    ]}
+                                    tension={0.08}
+                                    opacity="0"
+                                    stroke="blue"/>
+                                
                             </Group>
                         );
                     })}
