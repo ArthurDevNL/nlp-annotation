@@ -99,10 +99,14 @@ class TextTree extends React.Component {
                                     key={'text-' + index}
                                     x={index * 80}
                                     y={100} 
+                                    height={48}
+                                    verticalAlign="middle"
                                     text={word} 
                                     key={index} 
                                     fill="#343434"
                                     fontVariant="bold"
+                                    padding={10}
+
                                     align="center"
                                     fontSize={18} />
                             </Group>
