@@ -48,7 +48,11 @@ class App extends React.Component {
                     onTokenSelect={this.handleTokenSelect} 
                 />
     
-                <TextTree selectedToken={this.state.selectedToken} />
+                <TextTree 
+                    selectedToken={this.state.selectedToken} 
+                    // sentence="something about it make me wonder ."
+                    sentence="Drop the mic ." 
+                />
     
                 <div id="text-editor" className="text-editor">
                     Text Editor

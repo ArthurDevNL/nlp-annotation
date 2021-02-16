@@ -1,6 +1,6 @@
 import React from "react";
 import Konva from "konva";
-import { Stage, Layer, Group, Rect, Text, Circle, Line, Arrow } from "react-konva";
+import { Stage, Layer, Group, Rect, Text, Label, Arrow, Tag } from "react-konva";
 
 class TextTree extends React.Component {
     constructor(props) {
@@ -12,15 +12,20 @@ class TextTree extends React.Component {
         this.layerRef = React.createRef();
 
         this.state = {
-            sentence: "Drop the mic .",
+            // sentence: "Drop the mic .",
             // words: ["Drop", "the", "mic", "."],
             selected: [],
             hoveredToken: null,
+            arcs: [],
+            config: {
+                y: 200,
+                arcHeight: -50,
+            }
         };
     }
 
     get words() {
-        return this.state.sentence.split(' ');
+        return this.props.sentence.split(' ');
     }
 
     wordClick(e, index) {
@@ -47,15 +52,31 @@ class TextTree extends React.Component {
             // proceed connect the line
             // update text editor -- event
             // reset selected
-            console.log('index from', this.state.selected[0]);
-            console.log('index to', this.state.selected[1])
-            const from = this.layerRef.current.children[this.state.selected[0] - 1];
-            const to = this.layerRef.current.children[this.state.selected[1]- 1];
+            const indexFrom = this.state.selected[0] - 1;
+            const indexTo = this.state.selected[1] - 1;
+            const from = this.layerRef.current.children[indexFrom];
+            const to = this.layerRef.current.children[indexTo];
 
-            this.createArc(from, to, {label: 'Root'});
-            this.setState({
+            console.log('from', from, 'x:', from.x(), 'y:', from.y(), 'width: ', from.children[0].width());
+            console.log('to', to, 'x:', to.x(), 'y:', to.y(), 'width: ', to.children[0].width());
+
+            // this.createArc(from, to, {label: 'Root'});
+            this.setState(prevState => ({
+                arcs: [...prevState.arcs, {
+                    label: this.props.selectedToken.label,
+                    from: {
+                        x: from.x(),
+                        width: from.children[0].width(),
+                        xPoint: from.x() + (from.children[0].width() / 2)
+                    },
+                    to: {
+                        x: to.x(),
+                        width: to.children[0].width(),
+                        xPoint: to.x() + (to.children[0].width() / 2)
+                    }
+                }],
                 selected: []
-            });
+            }));
         }
     }
 
@@ -75,7 +96,7 @@ class TextTree extends React.Component {
 
         from.children[2].attrs.points[4] = to.children[2].attrs.x;
         from.children[2].attrs.points[6] = to.children[2].attrs.x;
-        
+
         console.log(originalPoints);
         from.children[2].opacity(1);
         this.layerRef.current.batchDraw();
@@ -104,40 +125,49 @@ class TextTree extends React.Component {
         if (this.layerRef.current) {
             this.layerRef.current.children.forEach((group, index) => {
                 if (this.state.selected.includes(index + 1)) {
-                    group.children[2].fill("#ffffff");
+                    group.children[1].fill("#ffffff");
                 } else {
-                    group.children[2].fill("#343434");
+                    group.children[1].fill("#343434");
                 }
             })
         }
     }
 
     render() {
-        const label =
-            this.props.selectedToken && this.props.selectedToken.label
-                ? this.props.selectedToken.label
-                : "None";
         let totalTreeLength = 0;
         totalTreeLength += window.innerWidth / 8;
         return (
-            <Stage width={window.innerWidth} height={window.innerHeight/2} >
+            <Stage width={window.innerWidth} height={window.innerHeight/1.5} >
+                
+                {/* Token Layer */}
                 <Layer 
                     ref={this.layerRef}
-                    name="text-tree-canvas" 
+                    name="word-layer" 
                     align="center">
                     {this.words.map((word, index) => {
                         index += 1;
-                        const rectLength = word.length === 1 ? word.length * 22 : word.length * 16.18;
+                        const rectLength = word.length === 1 
+                            ? word.length * 22 
+                            : word.length >= 4 
+                                ? word.length >= 8 
+                                    ? word.length * 12.5// 15.18;
+                                    : word.length * 15
+                                : word.length * 20;
+
                         const rectHeight = 48;
                         const gutter = 20;
                         
                         const xPosition = totalTreeLength + gutter;
-                        const yPosition = 100;
+                        const yPosition = this.state.config.y;
                         totalTreeLength += rectLength + gutter;
 
                         return (
                             <Group 
                                 ref={this.groupRef}
+                                key={`word-${word}-${index}`}
+                                name={word}
+                                x={xPosition}
+                                y={yPosition}
                                 onClick={(e) => this.wordClick(e, index)}
                                 draggable={false}
                                 align="center"
@@ -145,48 +175,74 @@ class TextTree extends React.Component {
                                 onMouseLeave={e => this.onMouseLeave(e, index)}
                                 key={'group-' + index}>
                                 <Rect
-                                    key={'rect-' + index}
-                                    x={xPosition}
-                                    y={yPosition} 
                                     width={rectLength}
-                                    height={48}
+                                    height={rectHeight}
                                     stroke={this.isHovered(index) || this.state.selected.includes(index) ? '#c25e5e' : '#D2D2D2'}
                                     strokeWidth={2}
                                     cornerRadius={10}
-                                    
                                     fill={this.state.selected.includes(index) ? '#c25e5e' : '#D2D2D2'}
-                                    align="center"
-                                />
+                                    align="center" />
                                 <Text 
-                                    key={'text-' + index}
-                                    x={xPosition}
-                                    y={yPosition}
-                                    height={48}
+                                    height={rectHeight}
                                     verticalAlign="middle"
                                     text={word} 
-                                    key={index} 
                                     fill="#343434"
                                     fontVariant="bold"
                                     padding={10}
 
                                     align="center"
                                     fontSize={18} />
-                                <Arrow
-                                    x={xPosition}
-                                    y={yPosition}
-                                    points={[
-                                        rectLength/2, rectHeight/(rectHeight * -1 / 2),
-                                        rectLength/2, -50, 
-                                        rectLength*1.5, -50, 
-                                        rectLength*1.5, rectHeight/(rectHeight * -1 / 2)
-                                    ]}
-                                    tension={0.08}
-                                    opacity="0"
-                                    stroke="blue"/>
-                                
                             </Group>
                         );
                     })}
+                </Layer>
+
+
+                {/* Arc Layer */}
+                <Layer 
+                    name="arc-layer" 
+                    align="center">
+                    {this.state.arcs.map((arc, index) => {
+                        const yPosition = this.state.config.y;
+                        const arcHeight = this.state.config.arcHeight + index * -15;
+                        
+                        const {xPoint: fromPoint} = arc.from;
+                        const {xPoint: toPoint} = arc.to;
+                        
+                        const labelPosition = (toPoint - fromPoint);
+                        // console.log('labelPosition', labelPosition)
+
+                        return (
+                            <Group
+                                key={`arc-${arc.label}-${index}`}
+                                x={0}
+                                y={yPosition}>
+                                <Arrow
+                                    points={[
+                                        fromPoint, 0,
+                                        fromPoint, arcHeight, 
+                                        toPoint, arcHeight, 
+                                        toPoint, 0
+                                    ]}
+                                    tension={0.09}
+                                    stroke="#D2D2D2" />
+                                <Label
+                                    x={labelPosition}
+                                    y={arcHeight - 8}
+                                    opacity={1}>
+                                    <Tag 
+                                        fill="#D2D2D2" 
+                                        cornerRadius={5}/>
+                                    <Text
+                                        
+                                        verticalAlign="middle"
+                                        padding={2}    
+                                        fontSize={10}
+                                        fontStyle="bold"
+                                        text={`${arc.label}`}/>
+                                </Label>
+                            </Group>
+                        )})}
                 </Layer>
             </Stage>
         );
