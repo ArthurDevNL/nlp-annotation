@@ -21,6 +21,7 @@ class App extends React.Component {
                     id: '3'
                 },
             ],
+            singleToken: ['1'], // which token don't need to pair with other // id
             selectedToken: null,
         }
     }
@@ -45,13 +46,14 @@ class App extends React.Component {
                 <NavigationBar 
                     tokens={tokens} 
                     selectedToken={this.state.selectedToken}
-                    onTokenSelect={this.handleTokenSelect} 
+                    onTokenSelect={this.handleTokenSelect}
                 />
     
                 <TextTree 
                     selectedToken={this.state.selectedToken} 
                     // sentence="something about it make me wonder ."
                     sentence="Drop the mic ." 
+                    singleToken={this.state.singleToken}
                 />
     
                 <div id="text-editor" className="text-editor">

@@ -25,6 +25,10 @@ class TextTree extends React.Component {
         };
     }
 
+    get isSingleToken() {
+        return this.props.singleToken.includes(this.props.selectedToken.id);
+    }
+
     get words() {
         return this.props.sentence.split(' ');
     }
@@ -46,7 +50,29 @@ class TextTree extends React.Component {
             // TODO: add condition for single (ROOT) select
             this.setState({
                 selected: [index]
-            })
+            });
+            if (this.isSingleToken) {
+                console.log('single token', index);
+                const indexFrom = this.state.selected[0] - 1;
+                const from = this.layerRef.current.children[indexFrom];
+                this.setState(prevState => ({
+                    arcs: [...prevState.arcs, {
+                        label: this.props.selectedToken.label,
+                        single: true,
+                        from: {
+                            x: from.x(),
+                            width: from.children[0].width(),
+                            xPoint: from.x() + (from.children[0].width() / 2)
+                        },
+                        to: {
+                            x: from.x(),
+                            width: from.children[0].width(),
+                            xPoint: from.x() + (from.children[0].width() / 2)
+                        }
+                    }],
+                    selected: []
+                }));
+            }
         } else {
             this.setState({
                 selected: [this.state.selected[0], index]
@@ -66,6 +92,7 @@ class TextTree extends React.Component {
             this.setState(prevState => ({
                 arcs: [...prevState.arcs, {
                     label: this.props.selectedToken.label,
+                    single: false,
                     from: {
                         x: from.x(),
                         width: from.children[0].width(),
@@ -211,7 +238,7 @@ class TextTree extends React.Component {
                         const {xPoint: fromPoint} = arc.from;
                         const {xPoint: toPoint} = arc.to;
 
-                        const labelPosition = (fromPoint + toPoint + (arc.label.length * -6)) / 2
+                        const labelPosition = (fromPoint + toPoint + (arc.label.length * -7.5)) / 2
 
                         return (
                             <Group
