@@ -20,6 +20,7 @@ class TextTree extends React.Component {
             config: {
                 y: 200,
                 arcHeight: -50,
+                arcHeightIncrement: -20,
             }
         };
     }
@@ -205,13 +206,12 @@ class TextTree extends React.Component {
                     align="center">
                     {this.state.arcs.map((arc, index) => {
                         const yPosition = this.state.config.y;
-                        const arcHeight = this.state.config.arcHeight + index * -15;
+                        const arcHeight = this.state.config.arcHeight + index * this.state.config.arcHeightIncrement;
                         
                         const {xPoint: fromPoint} = arc.from;
                         const {xPoint: toPoint} = arc.to;
 
                         const labelPosition = (fromPoint + toPoint + (arc.label.length * -6)) / 2
-                        // console.log('labelPosition', labelPosition)
 
                         return (
                             <Group

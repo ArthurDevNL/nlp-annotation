@@ -47,16 +47,18 @@ code {
     font-size: 18px;
 }
 
-.token:focus,
+
 .token:hover,
-.token:active .token.active {
+.token:active, 
+.token.active {
     background-color: var(--white);
-    box-shadow: 0 0 0 3px var(--red-light);
+    
     color: var(--red);
     cursor: pointer;
 }
 
 .token:focus {
     outline: none;
-    box-shadow: none;
+    background-color: none;
+    box-shadow: 0 0 0 3px var(--red-light);
 }
