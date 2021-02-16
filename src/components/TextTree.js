@@ -42,6 +42,7 @@ class TextTree extends React.Component {
 
         // set selected word
         if (!this.state.selected[0] || this.state.selected.length >= 2) {
+            // TODO: add condition for single (ROOT) select
             this.setState({
                 selected: [index]
             })
@@ -208,8 +209,8 @@ class TextTree extends React.Component {
                         
                         const {xPoint: fromPoint} = arc.from;
                         const {xPoint: toPoint} = arc.to;
-                        
-                        const labelPosition = (toPoint - fromPoint);
+
+                        const labelPosition = (fromPoint + toPoint + (arc.label.length * -6)) / 2
                         // console.log('labelPosition', labelPosition)
 
                         return (
@@ -234,7 +235,6 @@ class TextTree extends React.Component {
                                         fill="#D2D2D2" 
                                         cornerRadius={5}/>
                                     <Text
-                                        
                                         verticalAlign="middle"
                                         padding={2}    
                                         fontSize={10}
