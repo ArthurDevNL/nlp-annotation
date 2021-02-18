@@ -1,6 +1,6 @@
 import React from "react";
-import Konva from "konva";
 import { Stage, Layer, Group, Rect, Text, Label, Arrow, Tag } from "react-konva";
+import Placer from "./Placer";
 
 class TextTree extends React.Component {
     constructor(props) {
@@ -12,8 +12,6 @@ class TextTree extends React.Component {
         this.layerRef = React.createRef();
 
         this.state = {
-            // sentence: "Drop the mic .",
-            // words: ["Drop", "the", "mic", "."],
             selected: [],
             hoveredToken: null,
             arcs: [],
@@ -21,7 +19,9 @@ class TextTree extends React.Component {
                 y: 200,
                 arcHeight: -50,
                 arcHeightIncrement: -20,
-            }
+            },
+            pointCounter: {},
+            placers: []
         };
     }
 
@@ -45,90 +45,102 @@ class TextTree extends React.Component {
             return;
         }
 
+        this.createArc(index);
+    }
+
+    createArc(index) {
+        // update pointCounter
+        this.setState(prevState => {
+            let pointCounter = Object.assign({}, prevState.pointCounter);
+            pointCounter[index] = pointCounter[index] + 1 || 1;
+            return { pointCounter };
+        });
+
+        // add to placer
+
         // set selected word
         if (!this.state.selected[0] || this.state.selected.length >= 2) {
-            // TODO: add condition for single (ROOT) select
             this.setState({
                 selected: [index]
             });
+
+            // for single token (ROOT)
             if (this.isSingleToken) {
-                console.log('single token', index);
-                const indexFrom = this.state.selected[0] - 1;
-                const from = this.layerRef.current.children[indexFrom];
-                this.setState(prevState => ({
-                    arcs: [...prevState.arcs, {
-                        label: this.props.selectedToken.label,
-                        single: true,
-                        from: {
-                            x: from.x(),
-                            width: from.children[0].width(),
-                            xPoint: from.x() + (from.children[0].width() / 2)
-                        },
-                        to: {
-                            x: from.x(),
-                            width: from.children[0].width(),
-                            xPoint: from.x() + (from.children[0].width() / 2)
-                        }
-                    }],
-                    selected: []
-                }));
+                this.setWord(0, 0);
             }
         } else {
             this.setState({
                 selected: [this.state.selected[0], index]
             })
-            // proceed connect the line
-            // update text editor -- event
-            // reset selected
-            const indexFrom = this.state.selected[0] - 1;
-            const indexTo = this.state.selected[1] - 1;
-            const from = this.layerRef.current.children[indexFrom];
-            const to = this.layerRef.current.children[indexTo];
-
-            console.log('from', from, 'x:', from.x(), 'y:', from.y(), 'width: ', from.children[0].width());
-            console.log('to', to, 'x:', to.x(), 'y:', to.y(), 'width: ', to.children[0].width());
-
-            // this.createArc(from, to, {label: 'Root'});
-            this.setState(prevState => ({
-                arcs: [...prevState.arcs, {
-                    label: this.props.selectedToken.label,
-                    single: false,
-                    from: {
-                        x: from.x(),
-                        width: from.children[0].width(),
-                        xPoint: from.x() + (from.children[0].width() / 2)
-                    },
-                    to: {
-                        x: to.x(),
-                        width: to.children[0].width(),
-                        xPoint: to.x() + (to.children[0].width() / 2)
-                    }
-                }],
-                selected: []
-            }));
+            this.setWord(0, 1);
         }
     }
 
-    /**
-     * Create arrow
-     * @param {Group} from 
-     * @param {Group} to
-     * @param {Object} token // need its label only
-     */
-    createArc(from, to, token) {
-        console.log('createArc', from.children[2]);
-        let originalPoints = [...from.children[2].attrs.points];
-        console.log('to.x()', to.children[2].attrs.x);
-        originalPoints[4] = to.children[2].attrs.x;
-        originalPoints[6] = to.children[2].attrs.x;
-        // from.children[2].points(originalPoints);
+    setWord(_indexFrom, _indexTo) {
+        // proceed connect the line
+        // update text editor -- event
+        // reset selected
+        const arcId = this.state.selected.join('');
+        const indexFrom = this.state.selected[_indexFrom] - 1;
+        const indexTo = this.state.selected[_indexTo] - 1;
+        const from = this.layerRef.current.children[indexFrom];
+        const to = this.layerRef.current.children[indexTo];
+        const fromName = from.attrs.name;
+        const toName = to.attrs.name;
+        const isSingle = _indexFrom === _indexTo ? true : false
 
-        from.children[2].attrs.points[4] = to.children[2].attrs.x;
-        from.children[2].attrs.points[6] = to.children[2].attrs.x;
+        // console.log('from', from, 'x:', from.x(), 'y:', from.y(), 'width: ', from.children[0].width());
+        // console.log('to', to, 'x:', to.x(), 'y:', to.y(), 'width: ', to.children[0].width());
 
-        console.log(originalPoints);
-        from.children[2].opacity(1);
-        this.layerRef.current.batchDraw();
+        const width = from.children[0].width();
+        const count = this.state.pointCounter[indexFrom] ? this.state.pointCounter[indexFrom] + 2 : 1;
+        const fromPosition = from.x() + (width - (width /count) / 2);
+        // const fromPosition = from.x() + (from.children[0].width() / 2);
+        // console.log(width, count, fromPosition);
+
+        this.state.placers[fromName].add({
+            arcId,
+            from: from.x(),
+            to: to.x(),
+            width: from.children[0].width(),
+            distance: 0
+        });
+
+        if (!isSingle) {
+           this.state.placers[toName].add({
+                arcId,
+                from: to.x(),
+                to: from.x(),
+                width: to.children[0].width(),
+                distance: 0
+           });
+        }
+        setTimeout(() => {
+
+            console.log('node: ', fromName, arcId, this.state.placers[fromName].placement[arcId]);
+            console.log('node: ', toName, arcId, this.state.placers[toName].placement[arcId]);
+        },1000)
+
+        // update state
+        this.setState(prevState => ({
+            arcs: [...prevState.arcs, {
+                arcId,
+                label: this.props.selectedToken.label,
+                single: isSingle,
+                from: {
+                    x: from.x(),
+                    width: from.children[0].width(),
+                    // xPoint: fromPosition,
+                    xPoint: from.x() + (from.children[0].width() / 2)
+                },
+                to: {
+                    x: to.x(),
+                    width: to.children[0].width(),
+                    xPoint: to.x() + (to.children[0].width() / 2)
+                }
+            }],
+            selected: []
+        }));
     }
 
     onMouseOver(e, index) {
@@ -144,6 +156,17 @@ class TextTree extends React.Component {
 
     isHovered(index) {
         return index === this.state.hoveredToken;
+    }
+
+    componentDidMount() {
+        // setup Placers
+        let arrObj = {}
+        for (let word of this.words) {
+            arrObj[word] = new Placer({name: word})
+        }
+        this.setState({
+            placers: arrObj
+        });
     }
 
     componentDidUpdate() {
@@ -166,7 +189,10 @@ class TextTree extends React.Component {
         let totalTreeLength = 0;
         totalTreeLength += window.innerWidth / 8;
         return (
-            <Stage width={window.innerWidth} height={window.innerHeight/1.5} >
+            <Stage 
+                width={window.innerWidth} 
+                height={window.innerHeight/1.5} 
+                draggable={true}>
                 
                 {/* Token Layer */}
                 <Layer 
@@ -201,8 +227,7 @@ class TextTree extends React.Component {
                                 draggable={false}
                                 align="center"
                                 onMouseOver={e => this.onMouseOver(e, index)}
-                                onMouseLeave={e => this.onMouseLeave(e, index)}
-                                key={'group-' + index}>
+                                onMouseLeave={e => this.onMouseLeave(e, index)}>
                                 <Rect
                                     width={rectLength}
                                     height={rectHeight}
