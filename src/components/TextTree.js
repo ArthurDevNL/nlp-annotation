@@ -185,6 +185,17 @@ class TextTree extends React.Component {
                 }
             })
         }
+
+        // update placer
+        this.words.forEach(word => {
+            if (!this.state.placers[word]) {
+                this.setState(prevState => {
+                    prevState.placers[word] = new Placer({name: word});
+                    return { prevState };
+                });
+            }
+            
+        });
     }
 
     render() {

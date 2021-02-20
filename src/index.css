@@ -62,3 +62,19 @@ code {
     background-color: none;
     box-shadow: 0 0 0 3px var(--red-light);
 }
+
+.text-editor {
+    text-align: initial;
+    font-size: 14px;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.text-editor__text-input {
+    width: 50%;
+    border: 0;
+    font-size: 1em;
+}
+
+.text-editor__row {
+    margin-bottom: .2em;
+}
