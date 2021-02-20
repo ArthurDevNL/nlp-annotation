@@ -6,7 +6,8 @@ interface Point {
     to: number;
     width: number;
     distance: number;
-    placement: number;
+    placementOrder: number;
+    placement: number; // coordinate
 }
 
 /**
@@ -26,25 +27,37 @@ export default class Placer extends React.Component {
     }
 
     add(point: Point) {
+        this.width = point.width;
         point.distance = point.to - point.from;
         this.list.push(point);
-        console.log(this.name, ': add', this.list);
         this.generateArcs();
+        // console.log(this.name, ': add', this.list);
     }
 
     generateArcs() {
         this.list = this.list.sort((a, b) => {
-            return a.distance - b.distance
+            return b.distance - a.distance
         }).map((point, index) => {
-            point.placement = index;
+            point.placementOrder = index;
             this.listObj[point.arcId] = point;
             return point;
         });
-        console.log('generateArcs', this.listObj);
+        // console.log('generateArcs', this.listObj);
     }
 
-    placement(arcId: number) {
-        return this.listObj[arcId];
+    getPlacement(arcId: number) {
+        const order = this.listObj[arcId].placementOrder + 1;
+        const startCoord = this.listObj[arcId].from;
+        // console.log('at', this.width, this.countPoint, at);
+        return startCoord + (((this.width/this.countPoint) * order)/2);
+    }
+
+    get countPoint() {
+        return this.list.length;
+    }
+
+    getHeightPlacement(arcId: number) {
+        return (this.countPoint - this.listObj[arcId].placementOrder) - 1;
     }
 
 }

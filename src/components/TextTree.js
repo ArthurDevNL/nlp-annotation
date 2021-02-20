@@ -1,5 +1,6 @@
 import React from "react";
 import { Stage, Layer, Group, Rect, Text, Label, Arrow, Tag } from "react-konva";
+import { createNoSubstitutionTemplateLiteral } from "typescript";
 import Placer from "./Placer";
 
 class TextTree extends React.Component {
@@ -56,8 +57,6 @@ class TextTree extends React.Component {
             return { pointCounter };
         });
 
-        // add to placer
-
         // set selected word
         if (!this.state.selected[0] || this.state.selected.length >= 2) {
             this.setState({
@@ -88,6 +87,7 @@ class TextTree extends React.Component {
         const fromName = from.attrs.name;
         const toName = to.attrs.name;
         const isSingle = _indexFrom === _indexTo ? true : false
+        const token = this.props.selectedToken.label;
 
         // console.log('from', from, 'x:', from.x(), 'y:', from.y(), 'width: ', from.children[0].width());
         // console.log('to', to, 'x:', to.x(), 'y:', to.y(), 'width: ', to.children[0].width());
@@ -115,32 +115,38 @@ class TextTree extends React.Component {
                 distance: 0
            });
         }
-        setTimeout(() => {
-
-            console.log('node: ', fromName, arcId, this.state.placers[fromName].placement[arcId]);
-            console.log('node: ', toName, arcId, this.state.placers[toName].placement[arcId]);
-        },1000)
-
-        // update state
-        this.setState(prevState => ({
-            arcs: [...prevState.arcs, {
+            // console.log('get placement node: ', fromName, arcId, this.state.placers[fromName].placement(arcId));
+            // console.log('get placement node: ', toName, arcId, this.state.placers[toName].placement(arcId));
+        
+        this.setState(prevState => {
+            let arcs = [...prevState.arcs];
+            
+            // add new arc
+            arcs.push({
                 arcId,
-                label: this.props.selectedToken.label,
+                label: token,
                 single: isSingle,
+                heightPlacement: this.state.placers[fromName].getHeightPlacement(arcId),
                 from: {
-                    x: from.x(),
-                    width: from.children[0].width(),
-                    // xPoint: fromPosition,
-                    xPoint: from.x() + (from.children[0].width() / 2)
+                    name: fromName,
+                    xPoint: this.state.placers[fromName].getPlacement(arcId)
                 },
                 to: {
-                    x: to.x(),
-                    width: to.children[0].width(),
-                    xPoint: to.x() + (to.children[0].width() / 2)
+                    name: toName,
+                    xPoint: this.state.placers[toName].getPlacement(arcId)
                 }
-            }],
-            selected: []
-        }));
+            });
+            arcs = arcs.map((arc, index) => {
+                arc.from.xPoint = this.state.placers[arc.from.name].getPlacement(arc.arcId);
+                arc.to.xPoint = this.state.placers[arc.to.name] ? this.state.placers[arc.to.name].getPlacement(arc.arcId) : 0;
+                arc.heightPlacement = index;
+                return arc;
+            });
+            return { 
+                arcs,
+                selected: []
+            };
+        });
     }
 
     onMouseOver(e, index) {
@@ -170,9 +176,6 @@ class TextTree extends React.Component {
     }
 
     componentDidUpdate() {
-        // console.log('this.layerRef', this.layerRef);
-        // console.log('this.groupRef', this.groupRef);
-
         // change the color of selected to white
         if (this.layerRef.current) {
             this.layerRef.current.children.forEach((group, index) => {
@@ -258,7 +261,7 @@ class TextTree extends React.Component {
                     align="center">
                     {this.state.arcs.map((arc, index) => {
                         const yPosition = this.state.config.y;
-                        const arcHeight = this.state.config.arcHeight + index * this.state.config.arcHeightIncrement;
+                        const arcHeight = this.state.config.arcHeight + arc.heightPlacement * this.state.config.arcHeightIncrement;
                         
                         const {xPoint: fromPoint} = arc.from;
                         const {xPoint: toPoint} = arc.to;
