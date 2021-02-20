@@ -1,11 +1,13 @@
 import React from 'react';
 import NavigationBar from './components/NavigationBar';
 import TextTree from './components/TextTree';
+import TextEditor from './components/TextEditor';
 
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.handleTokenSelect = this.handleTokenSelect.bind(this);
+        this.handleSentenceChange = this.handleSentenceChange.bind(this);
         this.state = {
             tokens: [
                 {
@@ -23,6 +25,7 @@ class App extends React.Component {
             ],
             singleToken: ['1'], // which token don't need to pair with other // id
             selectedToken: null,
+            sentence: 'Drop the mic .'
         }
     }
 
@@ -39,6 +42,12 @@ class App extends React.Component {
         )
     }
 
+    handleSentenceChange(_sentence) {
+        this.setState({
+            sentence: _sentence
+        });
+    }
+
     render() {
         const tokens = this.state.tokens;
         return (
@@ -52,13 +61,11 @@ class App extends React.Component {
                 <TextTree 
                     selectedToken={this.state.selectedToken} 
                     // sentence="something about it make me wonder ."
-                    sentence="Drop the mic ." 
+                    sentence={this.state.sentence} 
                     singleToken={this.state.singleToken}
                 />
     
-                <div id="text-editor" className="text-editor">
-                    Text Editor
-                </div>
+                <TextEditor text={this.state.sentence} onSentenceChange={this.handleSentenceChange}></TextEditor>
             </div>
         );
     }
