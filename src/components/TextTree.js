@@ -1,6 +1,5 @@
 import React from "react";
 import { Stage, Layer, Group, Rect, Text, Label, Arrow, Tag } from "react-konva";
-import { createNoSubstitutionTemplateLiteral } from "typescript";
 import Placer from "./Placer";
 
 class TextTree extends React.Component {
