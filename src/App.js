@@ -9,6 +9,7 @@ class App extends React.Component {
         super(props);
         this.handleTokenSelect = this.handleTokenSelect.bind(this);
         this.handleSentenceChange = this.handleSentenceChange.bind(this);
+        this.setTreeHeight = this.setTreeHeight.bind(this);
         this.onAddWord = this.onAddWord.bind(this);
         this.state = {
             tokens: [
@@ -27,7 +28,8 @@ class App extends React.Component {
             ],
             singleToken: ['1'], // which token don't need to pair with other // id
             selectedToken: null,
-            sentence: 'Drop the mic .'
+            sentence: 'Drop the mic .',
+            treeHeight: window.innerHeight/1.6
         }
     }
 
@@ -54,6 +56,14 @@ class App extends React.Component {
         console.log('add word');
     }
 
+    setTreeHeight(height) {
+        console.log('setHeight', height);
+
+        this.setState({
+            treeHeight: height,
+        });
+    }
+
     render() {
         const tokens = this.state.tokens;
         return (
@@ -71,9 +81,10 @@ class App extends React.Component {
                     // sentence="something about it make me wonder ."
                     sentence={this.state.sentence} 
                     singleToken={this.state.singleToken}
+                    height={this.state.treeHeight}
                 />
 
-                <Separator handleAdd={this.onAddWord}></Separator>
+                <Separator handleAdd={this.onAddWord} setTreeHeight={(h) => {this.setTreeHeight(h)}}></Separator>
 
                 <TextEditor text={this.state.sentence} onSentenceChange={this.handleSentenceChange}></TextEditor>
             </div>

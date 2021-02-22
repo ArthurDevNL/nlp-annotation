@@ -204,7 +204,7 @@ class TextTree extends React.Component {
         return (
             <Stage 
                 width={window.innerWidth} 
-                height={window.innerHeight/1.5} 
+                height={this.props.height} 
                 draggable={true}>
                 
                 {/* Token Layer */}
