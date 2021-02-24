@@ -1,5 +1,4 @@
-import React from "react";
-
+import React, {useState} from "react";
 export default class TextEditor extends React.Component {
     constructor(props) {
         super(props);
@@ -18,6 +17,10 @@ export default class TextEditor extends React.Component {
     render() {
         return(
             <div className="text-editor">
+                <div className="separator">
+                    <div className="separator__add"></div>
+                    <div className="separator__drag"></div>
+                </div>
                 <div className="text-editor__body">
                     <ul type="none">
                         <li className="text-editor__row"># newdoc id = no1118</li>

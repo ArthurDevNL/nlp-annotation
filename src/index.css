@@ -91,6 +91,7 @@ code {
     border-bottom: 1px solid #bebebe;
     border-top: 1px solid #bebebe;
     height: 26px;
+    z-index: 10;
 }
 
 .separator__add {
@@ -108,7 +109,8 @@ code {
 .separator__add::after {
     content: '+';
     position: relative;
-    top: -5px;
+    top: -3px;
+    left: 2px;
 }
 
 .separator__add:active {
@@ -122,23 +124,24 @@ code {
 .separator__drag {
     display: inline-block;
     position: relative;
-    top: -10px;
+    top: -14px;
     left: -50vw;
     width: 46px;
     height: 17px;
     border-radius: 8px;
     background-color: #d8d8d8;
     border: 1px solid #bebebe;
+    pointer-events: none;
 }
 .separator__drag:hover {
-    cursor: grabbing;
+    cursor: row-resize;
 }
 .separator__drag::after {
     content: '===';
-    letter-spacing: -8px;
+    letter-spacing: -5px;
     font-size: 26px;
     color: #bebebe;
     position: relative;
-    top: -10px;
-    left: -4px;
+    top: -7px;
+    left: 5px;
 }

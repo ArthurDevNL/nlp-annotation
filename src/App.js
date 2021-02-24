@@ -2,14 +2,15 @@ import React from 'react';
 import NavigationBar from './components/NavigationBar';
 import TextTree from './components/TextTree';
 import TextEditor from './components/TextEditor';
-import Separator from './components/Separator';
+import SplitPane from 'react-split-pane';
+import './css/split-pane.css'
+// import SplitPane from './components/SplitPane';
 
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.handleTokenSelect = this.handleTokenSelect.bind(this);
         this.handleSentenceChange = this.handleSentenceChange.bind(this);
-        this.setTreeHeight = this.setTreeHeight.bind(this);
         this.onAddWord = this.onAddWord.bind(this);
         this.state = {
             tokens: [
@@ -56,14 +57,6 @@ class App extends React.Component {
         console.log('add word');
     }
 
-    setTreeHeight(height) {
-        console.log('setHeight', height);
-
-        this.setState({
-            treeHeight: height,
-        });
-    }
-
     render() {
         const tokens = this.state.tokens;
         return (
@@ -73,20 +66,16 @@ class App extends React.Component {
                     selectedToken={this.state.selectedToken}
                     onTokenSelect={this.handleTokenSelect}
                 />
-
-                
-    
-                <TextTree 
-                    selectedToken={this.state.selectedToken} 
-                    // sentence="something about it make me wonder ."
-                    sentence={this.state.sentence} 
-                    singleToken={this.state.singleToken}
-                    height={this.state.treeHeight}
-                />
-
-                <Separator handleAdd={this.onAddWord} setTreeHeight={(h) => {this.setTreeHeight(h)}}></Separator>
-
-                <TextEditor text={this.state.sentence} onSentenceChange={this.handleSentenceChange}></TextEditor>
+                <SplitPane split="horizontal" defaultSize={this.state.treeHeight}>
+                    <TextTree 
+                        selectedToken={this.state.selectedToken} 
+                        sentence={this.state.sentence} 
+                        singleToken={this.state.singleToken}
+                        height={this.state.treeHeight}
+                        className="split-pane--top"
+                    />
+                    <TextEditor text={this.state.sentence} onSentenceChange={this.handleSentenceChange} className="split-pane--bottom"></TextEditor>
+                </SplitPane>
             </div>
         );
     }
