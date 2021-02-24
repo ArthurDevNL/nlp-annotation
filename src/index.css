@@ -25,6 +25,8 @@ code {
 
 .nav {
     display: flex;
+    position: relative;
+    z-index: 10;
     align-items: center;
     padding: 11px 13px;
     max-height: 59px;
@@ -52,7 +54,6 @@ code {
 .token:active, 
 .token.active {
     background-color: var(--white);
-    
     color: var(--red);
     cursor: pointer;
 }
@@ -77,6 +78,7 @@ code {
 
 .text-editor__row {
     margin-bottom: .2em;
+    list-style-type: "#  ";
 }
 
 

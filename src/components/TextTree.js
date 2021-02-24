@@ -29,10 +29,6 @@ class TextTree extends React.Component {
         return this.props.singleToken.includes(this.props.selectedToken.id);
     }
 
-    get words() {
-        return this.props.sentence.split(' ');
-    }
-
     wordClick(e, index) {
         // toggling
         if (this.state.selected.includes(index)) {
@@ -166,7 +162,7 @@ class TextTree extends React.Component {
     componentDidMount() {
         // setup Placers
         let arrObj = {}
-        for (let word of this.words) {
+        for (let word of this.props.words) {
             arrObj[word] = new Placer({name: word})
         }
         this.setState({
@@ -187,7 +183,7 @@ class TextTree extends React.Component {
         }
 
         // update placer
-        this.words.forEach(word => {
+        this.props.words.forEach(word => {
             if (!this.state.placers[word]) {
                 this.setState(prevState => {
                     prevState.placers[word] = new Placer({name: word});
@@ -212,7 +208,7 @@ class TextTree extends React.Component {
                     ref={this.layerRef}
                     name="word-layer" 
                     align="center">
-                    {this.words.map((word, index) => {
+                    {this.props.words.map((word, index) => {
                         index += 1;
                         const rectLength = word.length === 1 
                             ? word.length * 22 
