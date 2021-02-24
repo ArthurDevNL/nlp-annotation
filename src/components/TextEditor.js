@@ -1,36 +1,28 @@
 import React, {useState} from "react";
-export default class TextEditor extends React.Component {
-    constructor(props) {
-        super(props);
-        this.handleTextChange = this.handleTextChange.bind(this);
-        this.state = {
-            id: 'no1118',
-            sent_id: 'n01118003'
-        }
-    }
+export default function TextEditor(props) {
+    const [id, setId] = useState('no1118')
+    const [sentId, setSentId] = useState('n01118003')
 
-    handleTextChange(e) {
+    function handleTextChange(e) {
         console.log(e.target.value);
-        this.props.onSentenceChange(e.target.value);
+        props.onSentenceChange(e.target.value);
     }
 
-    render() {
-        return(
-            <div className="text-editor">
-                <div className="separator">
-                    <div className="separator__add"></div>
-                    <div className="separator__drag"></div>
-                </div>
-                <div className="text-editor__body">
-                    <ul type="none">
-                        <li className="text-editor__row"># newdoc id = no1118</li>
-                        <li className="text-editor__row"># sent_id = n01118003</li>
-                        <li className="text-editor__row">
-                            # text = <input className="text-editor__text-input" value={this.props.text} onChange={this.handleTextChange}></input>
-                        </li>
-                    </ul>
-                </div>
+    return(
+        <div className="text-editor">
+            <div className="separator">
+                <div className="separator__add"></div>
+                <div className="separator__drag"></div>
             </div>
-        )
-    }
+            <div className="text-editor__body">
+                <ul type="none">
+                    <li className="text-editor__row"># newdoc id = {id}</li>
+                    <li className="text-editor__row"># sent_id = {sentId}</li>
+                    <li className="text-editor__row">
+                        # text = <input className="text-editor__text-input" value={props.text} onChange={handleTextChange}></input>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    )
 }
