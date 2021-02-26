@@ -23,6 +23,7 @@ class TextTree extends React.Component {
             placers: {}
         };
     }
+    
 
     get isSingleToken() {
         return this.props.singleToken.includes(this.props.selectedToken.id);
