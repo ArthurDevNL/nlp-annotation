@@ -175,6 +175,7 @@ class TextTree extends React.Component {
             this.setState({
                 placers: arrObj
             });
+            console.log('Updating placers', arrObj);
         }
 
         // change the color of selected to white
@@ -189,15 +190,14 @@ class TextTree extends React.Component {
         }
 
         // update placer
-        this.props.words.forEach(word => {
-            if (!this.state.placers[word]) {
-                this.setState(prevState => {
-                    prevState.placers[word] = new Placer({name: word});
-                    return { prevState };
-                });
-            }
-            
-        });
+        // this.props.words.forEach(word => {
+        //     if (!this.state.placers[word]) {
+        //         this.setState(prevState => {
+        //             prevState.placers[word] = new Placer({name: word});
+        //             return { prevState };
+        //         });
+        //     }    
+        // });
     }
 
     render() {

@@ -44,10 +44,14 @@ export default class Placer extends Object {
     }
 
     getPlacement(arcId: number) {
-        const order = this.listObj[arcId].placementOrder + 1;
-        const startCoord = this.listObj[arcId].from;
-        // console.log('at', this.width, this.countPoint, at);
-        return startCoord + (((this.width/this.countPoint) * order)/2);
+        if (this.listObj[arcId]) {
+            const order = this.listObj[arcId].placementOrder + 1;
+            const startCoord = this.listObj[arcId].from;
+            return startCoord + (((this.width/this.countPoint) * order)/2);
+        } else {
+            console.log('getPlacement: arcId not registered', arcId );
+            return false;
+        }
     }
 
     get countPoint() {
