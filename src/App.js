@@ -87,7 +87,7 @@ class App extends React.Component {
                     onTokenSelect={this.handleTokenSelect}
                 />
                 <SplitPane split="horizontal" defaultSize={this.state.treeHeight}>
-                    <TextTree 
+                    <TextTree
                         selectedToken={this.state.selectedToken} 
                         sentence={this.state.sentence}
                         words={this.state.words}

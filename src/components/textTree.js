@@ -21,7 +21,7 @@ class TextTree extends React.Component {
                 arcHeightIncrement: -20,
             },
             pointCounter: {},
-            placers: []
+            placers: {}
         };
     }
 
@@ -160,22 +160,48 @@ class TextTree extends React.Component {
     }
 
     componentDidMount() {
-        
-
-        
+        let intervalId = setInterval(() => {
+            // setup Placers
+            if (this.props.words.length) {
+                let arrObj = {}
+                for (let word of this.props.words) {
+                    arrObj[word.form] = new Placer({name: word.form})
+                }
+                this.setState({
+                    placers: arrObj
+                });    
+                // console.log('setup placer', arrObj);
+                clearInterval(intervalId);
+            }
+        }, 150);
     }
 
     componentDidUpdate(prevProps) {
-        if (this.props.words.length && this.props.words !== prevProps.words) {
-            // setup Placers
+        // re-create Placers
+        if (this.props.words !== prevProps.words) { 
             let arrObj = {}
             for (let word of this.props.words) {
-                arrObj[word.form] = new Placer({name: word})
+                arrObj[word.form] = new Placer({name: word.form});
             }
-            this.setState({
-                placers: arrObj
+            // update
+            this.props.words.forEach(word => {
+                if (!this.state.placers[word.form]) {
+                    this.setState(prevState => {
+                        Object.keys(arrObj).forEach(_word => {
+                            arrObj[_word] = prevState.placers[_word];
+                        });
+                        arrObj[word.form] = new Placer({name: word.form});
+                        return { 
+                            placers: arrObj,
+                            // for now remove all arcs
+                            // TODO: only remove arcs that word are removed
+                            arcs: []
+                        };
+                    });
+                }
             });
-            console.log('Updating placers', arrObj);
+
+            
         }
 
         // change the color of selected to white
@@ -188,16 +214,7 @@ class TextTree extends React.Component {
                 }
             })
         }
-
-        // update placer
-        // this.props.words.forEach(word => {
-        //     if (!this.state.placers[word]) {
-        //         this.setState(prevState => {
-        //             prevState.placers[word] = new Placer({name: word});
-        //             return { prevState };
-        //         });
-        //     }    
-        // });
+        
     }
 
     render() {
