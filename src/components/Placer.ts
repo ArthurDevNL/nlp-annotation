@@ -1,5 +1,3 @@
-import React from 'react';
-
 interface Point {
     arcId: string;
     from: number;
@@ -14,7 +12,7 @@ interface Point {
  * Placer
  * determine place group of points in some width
  */
-export default class Placer extends React.Component {
+export default class Placer extends Object {
 
     list: Array<Point> = [];
     listObj: any = {};

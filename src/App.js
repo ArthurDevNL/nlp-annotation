@@ -4,6 +4,7 @@ import TextTree from './components/TextTree';
 import TextEditor from './components/TextEditor';
 import SplitPane from 'react-split-pane';
 import './css/split-pane.css'
+import ConnllU from './components/ConnllU.ts';
 
 class App extends React.Component {
     constructor(props) {
@@ -38,10 +39,17 @@ class App extends React.Component {
         this.setState({
             selectedToken: this.state.tokens[0]
         });
-        
-        // console.log(this.state.sentence);
+        this.setWords(this.state.sentence);
+    }
+
+    setWords(sentence) {
+        let words = sentence.trim().split(' ');
+        words = words.map((word, index) => {
+            return new ConnllU({id: index + 1, form: word});
+        });
         this.setState({
-            words: this.state.sentence.split(' '),
+            sentence,
+            words
         });
     }
 
@@ -53,18 +61,17 @@ class App extends React.Component {
     }
 
     handleSentenceChange(_sentence) {
-        this.setState({
-            sentence: _sentence,
-            words: _sentence.split(' ')
-        });
+        this.setWords(_sentence);
     }
 
     addWord(e, word) {
+        word = word ? word : 'new';
         this.setState(prevState => {
             let words = [...prevState.words];
-            words.push(word);
+            words.push(new ConnllU({id: words.length, form: word}));
+            const wordsText = words.map(word => word.form);
             return {
-                sentence: prevState.words.join(' '),
+                sentence: wordsText.join(' '),
                 words
             };
         })
