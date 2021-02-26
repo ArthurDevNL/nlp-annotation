@@ -20,7 +20,6 @@ class TextTree extends React.Component {
                 arcHeight: -50,
                 arcHeightIncrement: -20,
             },
-            pointCounter: {},
             placers: {}
         };
     }
@@ -45,13 +44,6 @@ class TextTree extends React.Component {
     }
 
     createArc(index) {
-        // update pointCounter
-        // this.setState(prevState => {
-        //     let pointCounter = Object.assign({}, prevState.pointCounter);
-        //     pointCounter[index] = pointCounter[index] + 1 || 1;
-        //     return { pointCounter };
-        // });
-
         // set selected word
         if (!this.state.selected[0] || this.state.selected.length >= 2) {
             this.setState({
@@ -86,12 +78,6 @@ class TextTree extends React.Component {
 
         // console.log('from', from, 'x:', from.x(), 'y:', from.y(), 'width: ', from.children[0].width());
         // console.log('to', to, 'x:', to.x(), 'y:', to.y(), 'width: ', to.children[0].width());
-
-        const width = from.children[0].width();
-        const count = this.state.pointCounter[indexFrom] ? this.state.pointCounter[indexFrom] + 2 : 1;
-        const fromPosition = from.x() + (width - (width /count) / 2);
-        // const fromPosition = from.x() + (from.children[0].width() / 2);
-        // console.log(width, count, fromPosition);
 
         this.state.placers[fromName].add({
             arcId,
@@ -200,8 +186,6 @@ class TextTree extends React.Component {
                     });
                 }
             });
-
-            
         }
 
         // change the color of selected to white
