@@ -14,6 +14,7 @@ class TextTree extends React.Component {
         this.state = {
             selected: [],
             hoveredToken: null,
+            hoveredArc: null,
             arcs: [],
             config: {
                 y: 200,
@@ -143,15 +144,11 @@ class TextTree extends React.Component {
         });
     }
 
-    onMouseOver(e, index) {
-        this.setState({
-            hoveredToken: index,
-        })
-    }
-    onMouseLeave() {
-        this.setState({
-            hoveredToken: null
-        })
+    removeArc(index) {
+        this.setState(prevState => {
+            prevState.arcs.splice(index, 1);
+            return {prevState};
+        });
     }
 
     isHovered(index) {
@@ -258,8 +255,8 @@ class TextTree extends React.Component {
                                 onClick={(e) => this.wordClick(e, index)}
                                 draggable={false}
                                 align="center"
-                                onMouseOver={e => this.onMouseOver(e, index)}
-                                onMouseLeave={e => this.onMouseLeave(e, index)}>
+                                onMouseOver={() => this.setState({ hoveredToken: index })}
+                                onMouseLeave={() => this.setState({ hoveredToken: null })}>
                                 <Rect
                                     width={rectLength}
                                     height={rectHeight}
@@ -303,7 +300,10 @@ class TextTree extends React.Component {
                             <Group
                                 key={`arc-${arc.label}-${index}`}
                                 x={arcTension}
-                                y={yPosition}>
+                                y={yPosition}
+                                onClick={() => this.removeArc(index)}
+                                onMouseOver={() => this.setState({ hoveredArc: index })}
+                                onMouseLeave={() => this.setState({ hoveredArc: null })}>
                                 <Arrow
                                     points={[
                                         fromPoint, 0,
@@ -328,6 +328,21 @@ class TextTree extends React.Component {
                                         fontSize={10}
                                         fontStyle="bold"
                                         text={`${label}`}/>
+                                </Label>
+                                <Label
+                                    x={labelPosition + (label.length * 6.8)}
+                                    y={arcHeightTotal - 20}
+                                    opacity={index === this.state.hoveredArc ? 1 : 0}>
+                                    <Tag 
+                                        fill={color} 
+                                        cornerRadius={5}/>
+                                    <Text
+                                        verticalAlign="middle"
+                                        fill={fontColor}
+                                        padding={2}    
+                                        fontSize={10}
+                                        fontStyle="bold"
+                                        text="x"/>
                                 </Label>
                             </Group>
                         )})}
