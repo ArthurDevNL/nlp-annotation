@@ -64,7 +64,7 @@ class TreeEditor extends React.Component {
             // for single token (ROOT)
             if (this.isSingleToken) {
                 // check to have only 1 incoming
-                if (!this.arcsWithIncomings.includes(selectedId)) {
+                if (this.state.arcs.filter(arc => arc.arcId.length === 1) > -1 && !this.arcsWithIncomings.includes(selectedId)) {
                     this.setWord(0, 0);
                 } else {
                     console.log('arc has 1 incoming');
