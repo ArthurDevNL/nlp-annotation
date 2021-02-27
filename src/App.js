@@ -43,7 +43,7 @@ class App extends React.Component {
                     id: '2'
                 },
             ],
-            singleToken: ['1'], // which token don't need to pair with other // id
+            singleToken: ['0'], // which token don't need to pair with other // id
             selectedToken: null,
             sentence: 'Drop the mic .',
             words: [],

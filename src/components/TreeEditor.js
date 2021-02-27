@@ -94,7 +94,7 @@ class TreeEditor extends React.Component {
     }
 
     createArc(indexFrom, indexTo, tokenId) {
-        console.log('createArc', indexFrom, indexTo, tokenId);
+        // console.log('createArc', indexFrom, indexTo, tokenId);
         // proceed connect the line
         // update text editor -- event
         // reset selected
