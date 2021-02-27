@@ -31,10 +31,10 @@ class TreeEditor extends React.Component {
         return this.props.singleToken.includes(this.props.selectedToken.id);
     }
 
-    get arcsWithIncomings() {
+    get arcsWithOutgoing() {
         return this.state.arcs.filter(arc => {
-            return arc.arcId.length > 1 ? arc.arcId[1] : arc.arcId;
-        }).map(arc => arc.arcId.length > 1 ? arc.arcId[1] : arc.arcId[0]);
+            return arc.arcId.length > 1 ? arc.arcId[0] : false;
+        }).map(arc => arc.arcId[0]);
     }
 
     wordClick(e, index) {
@@ -61,11 +61,10 @@ class TreeEditor extends React.Component {
             
             const { selected } = this.state;
             const selectedId = selected.join('');
-
             // for single token (ROOT)
             if (this.isSingleToken) {
-                // check to have only 1 incoming
-                if (this.state.arcs.filter(arc => arc.arcId.length === 1) > -1 && !this.arcsWithIncomings.includes(selectedId)) {
+                // check to have only 1 outgoing
+                if (this.state.arcs.filter(arc => arc.arcId.length === 1) > -1 && !this.arcsWithOutgoing.includes(selectedId)) {
                     const indexFrom = this.state.selected[0] - 1;
                     const tokenId = this.props.selectedToken.id;
                     this.createArc(indexFrom, indexFrom, tokenId);
@@ -80,9 +79,8 @@ class TreeEditor extends React.Component {
             
             const { selected } = this.state;
             const selectedId = selected.join('');
-
-            // check to have only 1 incoming
-            if (!this.arcsWithIncomings.includes(selectedId[1])) {
+            // check to have only 1 outgoing`
+            if (!this.arcsWithOutgoing.includes(selectedId[0])) {
                 const indexFrom = this.state.selected[0] - 1;
                 const indexTo = this.state.selected[1] - 1;
                 const tokenId = this.props.selectedToken.id;
@@ -283,7 +281,7 @@ class TreeEditor extends React.Component {
                                         stroke={this.isHovered(index) || this.state.selected.includes(index) ? this.props.selectedToken.color : '#D2D2D2'}
                                         strokeWidth={2}
                                         cornerRadius={10}
-                                        fill={this.state.selected.includes(index) ? '#c25e5e' : '#D2D2D2'}
+                                        fill={this.state.selected.includes(index) ? this.props.selectedToken.color : '#D2D2D2'}
                                         align="center" />
                                     <Text 
                                         height={rectHeight}
