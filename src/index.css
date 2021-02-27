@@ -23,6 +23,9 @@ code {
     text-align: center;
 }
 
+
+/* Nav
+================================ */
 .nav {
     display: flex;
     position: relative;
@@ -33,6 +36,9 @@ code {
     background-color: var(--red);
 }
 
+
+/* Token
+================================ */
 .token:not(:first-child) {
     margin-left: 13px;
 }
@@ -48,41 +54,42 @@ code {
     font-weight: 600;
     font-size: 18px;
 }
-
-
 .token:hover,
-.token:active, 
+.token:active,
 .token.active {
     background-color: var(--white);
     color: var(--red);
     cursor: pointer;
 }
-
 .token:focus {
     outline: none;
     background-color: none;
     box-shadow: 0 0 0 3px var(--red-light);
 }
 
+
+/* Text Editor
+================================ */
 .text-editor {
     text-align: initial;
     font-size: 14px;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: "Courier New", Courier, monospace;
+    background-color: white;
+    height: 100%;
 }
-
 .text-editor__text-input {
     width: 50%;
     border: 0;
     font-size: 1em;
 }
-
 .text-editor__row {
-    margin-bottom: .2em;
+    margin-bottom: 0.2em;
     list-style-type: "#  ";
 }
 
 
-/* SEPARATOR */
+/* SEPARATOR
+================================ */
 .separator {
     display: flex;
     width: 100%;
@@ -95,7 +102,6 @@ code {
     height: 26px;
     z-index: 10;
 }
-
 .separator__add {
     position: relative;
     width: 16px;
@@ -107,22 +113,18 @@ code {
     color: white;
     background-color: #c25e5e;
 }
-
 .separator__add::after {
-    content: '+';
+    content: "+";
     position: relative;
     top: -3px;
     left: 2px;
 }
-
 .separator__add:active {
     top: 1px;
 }
-
 .separator__add:hover {
     cursor: pointer;
 }
-
 .separator__drag {
     display: inline-block;
     position: relative;
@@ -139,7 +141,7 @@ code {
     cursor: row-resize;
 }
 .separator__drag::after {
-    content: '===';
+    content: "===";
     letter-spacing: -5px;
     font-size: 26px;
     color: #bebebe;
