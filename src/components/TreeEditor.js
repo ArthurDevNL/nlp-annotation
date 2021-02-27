@@ -67,7 +67,6 @@ class TreeEditor extends React.Component {
                 if (this.state.arcs.filter(arc => arc.arcId.length === 1) > -1 && !this.arcsWithIncomings.includes(selectedId)) {
                     this.setWord(0, 0);
                 } else {
-                    console.log('arc has 1 incoming');
                     this.setState({ selected: [] });
                 }
             }
@@ -80,11 +79,9 @@ class TreeEditor extends React.Component {
             const selectedId = selected.join('');
 
             // check to have only 1 incoming
-            console.log(this.arcsWithIncomings);
             if (!this.arcsWithIncomings.includes(selectedId[1])) {
                 this.setWord(0, 1);
             } else {
-                console.log('arc has 1 incoming');
                 this.setState({ selected: [] });
             }
         }
