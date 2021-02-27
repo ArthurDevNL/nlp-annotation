@@ -19,12 +19,12 @@ class TextTree extends React.Component {
                 y: 200,
                 arcHeight: -50,
                 arcHeightIncrement: -20,
+                arcTension: 0,
             },
             placers: {}
         };
     }
     
-
     get isSingleToken() {
         return this.props.singleToken.includes(this.props.selectedToken.id);
     }
@@ -53,13 +53,23 @@ class TextTree extends React.Component {
 
             // for single token (ROOT)
             if (this.isSingleToken) {
-                this.setWord(0, 0);
+                // check if there is same arc
+                if (this.state.arcs.filter(arc => arc.arcId === this.state.selected.join('') && arc.label === this.props.selectedToken.label) > -1) {
+                    this.setWord(0, 0);
+                } else {
+                    this.setState({ selected: [] });
+                }
             }
         } else {
             this.setState({
                 selected: [this.state.selected[0], index]
-            })
-            this.setWord(0, 1);
+            });
+            // check if there is same arc
+            if (this.state.arcs.filter(arc => arc.arcId === this.state.selected.join('') && arc.label === this.props.selectedToken.label) > -1) {
+                this.setWord(0, 1);
+            } else {
+                this.setState({ selected: [] });
+            }
         }
     }
 
@@ -108,6 +118,8 @@ class TextTree extends React.Component {
                 arcId,
                 label: token,
                 single: isSingle,
+                color: this.props.selectedToken.color,
+                fontColor: this.props.selectedToken.fontColor,
                 heightPlacement: this.state.placers[fromName].getHeightPlacement(arcId),
                 from: {
                     name: fromName,
@@ -251,7 +263,7 @@ class TextTree extends React.Component {
                                 <Rect
                                     width={rectLength}
                                     height={rectHeight}
-                                    stroke={this.isHovered(index) || this.state.selected.includes(index) ? '#c25e5e' : '#D2D2D2'}
+                                    stroke={this.isHovered(index) || this.state.selected.includes(index) ? this.props.selectedToken.color : '#D2D2D2'}
                                     strokeWidth={2}
                                     cornerRadius={10}
                                     fill={this.state.selected.includes(index) ? '#c25e5e' : '#D2D2D2'}
@@ -263,7 +275,6 @@ class TextTree extends React.Component {
                                     fill="#343434"
                                     fontVariant="bold"
                                     padding={10}
-
                                     align="center"
                                     fontSize={18} />
                             </Group>
@@ -277,8 +288,11 @@ class TextTree extends React.Component {
                     name="arc-layer" 
                     align="center">
                     {this.state.arcs.map((arc, index) => {
-                        const yPosition = this.state.config.y;
-                        const arcHeight = this.state.config.arcHeight + arc.heightPlacement * this.state.config.arcHeightIncrement;
+                        const {y, arcHeight, arcHeightIncrement, arcTension} = this.state.config;
+                        const {color, fontColor, label} = arc;
+
+                        const yPosition = y;
+                        const arcHeightTotal = arcHeight + arc.heightPlacement * arcHeightIncrement;
                         
                         const {xPoint: fromPoint} = arc.from;
                         const {xPoint: toPoint} = arc.to;
@@ -288,30 +302,32 @@ class TextTree extends React.Component {
                         return (
                             <Group
                                 key={`arc-${arc.label}-${index}`}
-                                x={0}
+                                x={arcTension}
                                 y={yPosition}>
                                 <Arrow
                                     points={[
                                         fromPoint, 0,
-                                        fromPoint, arcHeight, 
-                                        toPoint, arcHeight, 
+                                        fromPoint, arcHeightTotal, 
+                                        toPoint, arcHeightTotal, 
                                         toPoint, 0
                                     ]}
-                                    tension={0.09}
-                                    stroke="#D2D2D2" />
+                                    fill={color}
+                                    tension={0}
+                                    stroke={color} />
                                 <Label
                                     x={labelPosition}
-                                    y={arcHeight - 8}
+                                    y={arcHeightTotal - 8}
                                     opacity={1}>
                                     <Tag 
-                                        fill="#D2D2D2" 
+                                        fill={color} 
                                         cornerRadius={5}/>
                                     <Text
                                         verticalAlign="middle"
+                                        fill={fontColor}
                                         padding={2}    
                                         fontSize={10}
                                         fontStyle="bold"
-                                        text={`${arc.label}`}/>
+                                        text={`${label}`}/>
                                 </Label>
                             </Group>
                         )})}

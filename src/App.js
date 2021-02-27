@@ -6,6 +6,15 @@ import SplitPane from 'react-split-pane';
 import './css/split-pane.css'
 import ConnllU from './components/ConnllU.ts';
 
+const color = {
+    white: '#efefef',
+    black: '#343434',
+    grey: '#D2D2D2',
+    red: '#c45d5c',
+    green: '#00b050',
+    blue: '#1d4c8c',
+}
+
 class App extends React.Component {
     constructor(props) {
         super(props);
@@ -16,14 +25,20 @@ class App extends React.Component {
             tokens: [
                 {
                     label: 'ROOT',
+                    color: color.black, // default grey: #D2D2D2
+                    fontColor: color.white, // default black: #343434
                     id: '1'
                 },
                 {
                     label: 'SUBJECT',
+                    color: color.red,
+                    fontColor: color.white,
                     id: '2'
                 },
                 {
                     label: 'DOBJ',
+                    color: color.green,
+                    fontColor: color.white,
                     id: '3'
                 },
             ],
