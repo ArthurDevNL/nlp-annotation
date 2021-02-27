@@ -5,6 +5,7 @@ import TextEditor from './components/TextEditor';
 import SplitPane from 'react-split-pane';
 import './css/split-pane.css'
 import ConnllU from './components/ConnllU.ts';
+import PlainTextEditor from './components/PlainTextEditor';
 
 const color = {
     white: '#efefef',
@@ -46,7 +47,7 @@ class App extends React.Component {
             selectedToken: null,
             sentence: 'Drop the mic .',
             words: [],
-            treeHeight: window.innerHeight/1.6
+            treeHeight: window.innerHeight/1.6,
         }
     }
 
@@ -69,7 +70,6 @@ class App extends React.Component {
     }
 
     handleTokenSelect(token) {
-        console.log('selected token', token);
         this.setState(
             { selectedToken: token}
         )
@@ -110,6 +110,11 @@ class App extends React.Component {
                         height={this.state.treeHeight}
                         className="split-pane--top"
                     />
+                    <PlainTextEditor
+                        sentence={this.state.sentence}
+                        addWord={this.addWord}>
+                    </PlainTextEditor>
+                    {/*
                     <TextEditor 
                         text={this.state.sentence} 
                         words={this.state.words}
@@ -117,6 +122,7 @@ class App extends React.Component {
                         addWord={this.addWord}
                         className="split-pane--bottom">    
                     </TextEditor>
+                    */}
                 </SplitPane>
             </div>
         );
