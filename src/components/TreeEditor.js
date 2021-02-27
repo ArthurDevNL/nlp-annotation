@@ -230,7 +230,7 @@ class TreeEditor extends React.Component {
 
     render() {
         let totalTreeLength = 0;
-        totalTreeLength += window.innerWidth / 8;
+        totalTreeLength += Math.round(window.innerWidth / 8);
         return (
             <Stage 
                 width={window.innerWidth} 
@@ -245,20 +245,15 @@ class TreeEditor extends React.Component {
                     {this.props.words.map((connllu, index) => {
                         const {form: word} = connllu;
                         index += 1;
-                        let rectLength = 0;
-                        if (word) {
-                            rectLength = word.length === 1
-                                ? word.length * 22 
-                                : word.length >= 4 
-                                    ? word.length >= 8 
-                                        ? word.length * 12.5// 15.18;
-                                        : word.length * 15
-                                    : word.length * 20;
+                        let rectLength = 20;
+                        var ctx = this.layerRef?.current?.canvas?.context;
+                        if (word && ctx) {
+                            rectLength = Math.round(ctx.measureText(word).width) * 2;
                         }
                         const rectHeight = 48;
-                        const gutter = 15;
-                        
-                        const xPosition = totalTreeLength + gutter;
+                        const gutter = 30;
+
+                        const xPosition = totalTreeLength;
                         const yPosition = this.state.config.y;
                         totalTreeLength += rectLength + gutter;
 
@@ -349,7 +344,7 @@ class TreeEditor extends React.Component {
                                         text={`${label}`}/>
                                 </Label>
                                 {/* "x" icon */}
-                                <Label
+                                {/* <Label
                                     x={labelPosition + (label.length * 6.8)}
                                     y={arcHeightTotal - 20}
                                     opacity={index === this.state.hoveredArc ? 1 : 0}>
@@ -363,7 +358,7 @@ class TreeEditor extends React.Component {
                                         fontSize={10}
                                         fontStyle="bold"
                                         text={`x`}/>
-                                </Label>
+                                </Label> */}
                             </Group>
                         )})}
                 </Layer>
