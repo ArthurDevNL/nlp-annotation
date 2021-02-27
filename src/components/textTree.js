@@ -155,8 +155,9 @@ class TextTree extends React.Component {
 
     removeArc(index) {
         this.setState(prevState => {
-            prevState.arcs.splice(index, 1);
-            return {prevState};
+            const newArcs = [...prevState.arcs];
+            newArcs.splice(index, 1);
+            return { arcs: newArcs };
         });
     }
 
