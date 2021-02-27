@@ -2,7 +2,7 @@ import React from "react";
 import { Stage, Layer, Group, Rect, Text, Label, Arrow, Tag } from "react-konva";
 import Placer from "./Placer";
 
-class TextTree extends React.Component {
+class TreeEditor extends React.Component {
     constructor(props) {
         super(props);
         this.wordClick = this.wordClick.bind(this);
@@ -365,4 +365,4 @@ class TextTree extends React.Component {
     }
 }
 
-export default TextTree;
+export default TreeEditor;
