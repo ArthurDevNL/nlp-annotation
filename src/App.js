@@ -28,19 +28,19 @@ class App extends React.Component {
                     label: 'ROOT',
                     color: color.black, // default grey: #D2D2D2
                     fontColor: color.white, // default black: #343434
-                    id: '1'
+                    id: '0' // same with array index
                 },
                 {
                     label: 'SUBJECT',
                     color: color.red,
                     fontColor: color.white,
-                    id: '2'
+                    id: '1'
                 },
                 {
                     label: 'DOBJ',
                     color: color.green,
                     fontColor: color.white,
-                    id: '3'
+                    id: '2'
                 },
             ],
             singleToken: ['1'], // which token don't need to pair with other // id
@@ -106,7 +106,9 @@ class App extends React.Component {
                         selectedToken={this.state.selectedToken} 
                         sentence={this.state.sentence}
                         words={this.state.words}
+                        arcs={this.state.arcs}
                         singleToken={this.state.singleToken}
+                        tokens={this.state.tokens}
                         height={this.state.treeHeight}
                         className="split-pane--top"
                     />

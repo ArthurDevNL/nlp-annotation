@@ -1,11 +1,12 @@
 import React from "react";
-import { Stage, Layer, Group, Rect, Text, Label, Arrow, Tag } from "react-konva";
+import { Stage, Layer, Group, Text, Label, Arrow, Tag } from "react-konva";
 import Placer from "./Placer";
 
 class TreeEditor extends React.Component {
     constructor(props) {
         super(props);
         this.wordClick = this.wordClick.bind(this);
+        this.createArc = this.createArc.bind(this);
         
         // word group reference
         this.groupRef = React.createRef();
@@ -48,10 +49,10 @@ class TreeEditor extends React.Component {
             return;
         }
 
-        this.createArc(index);
+        this.addSelected(index);
     }
 
-    createArc(index) {
+    addSelected(index) {
         // set selected word
         if (!this.state.selected[0] || this.state.selected.length >= 2) {
             this.setState({
@@ -65,7 +66,9 @@ class TreeEditor extends React.Component {
             if (this.isSingleToken) {
                 // check to have only 1 incoming
                 if (this.state.arcs.filter(arc => arc.arcId.length === 1) > -1 && !this.arcsWithIncomings.includes(selectedId)) {
-                    this.setWord(0, 0);
+                    const indexFrom = this.state.selected[0] - 1;
+                    const tokenId = this.props.selectedToken.id;
+                    this.createArc(indexFrom, indexFrom, tokenId);
                 } else {
                     this.setState({ selected: [] });
                 }
@@ -80,26 +83,28 @@ class TreeEditor extends React.Component {
 
             // check to have only 1 incoming
             if (!this.arcsWithIncomings.includes(selectedId[1])) {
-                this.setWord(0, 1);
+                const indexFrom = this.state.selected[0] - 1;
+                const indexTo = this.state.selected[1] - 1;
+                const tokenId = this.props.selectedToken.id;
+                this.createArc(indexFrom, indexTo, tokenId);
             } else {
                 this.setState({ selected: [] });
             }
         }
     }
 
-    setWord(_indexFrom, _indexTo) {
+    createArc(indexFrom, indexTo, tokenId) {
+        console.log('createArc', indexFrom, indexTo, tokenId);
         // proceed connect the line
         // update text editor -- event
         // reset selected
         const arcId = this.state.selected.join('');
-        const indexFrom = this.state.selected[_indexFrom] - 1;
-        const indexTo = this.state.selected[_indexTo] - 1;
         const from = this.layerRef.current.children[indexFrom];
         const to = this.layerRef.current.children[indexTo];
         const fromName = from.attrs.name;
         const toName = to.attrs.name;
-        const isSingle = _indexFrom === _indexTo ? true : false
-        const token = this.props.selectedToken.label;
+        const isSingle = indexFrom === indexTo ? true : false
+        
 
         // console.log('from', from, 'x:', from.x(), 'y:', from.y(), 'width: ', from.children[0].width());
         // console.log('to', to, 'x:', to.x(), 'y:', to.y(), 'width: ', to.children[0].width());
@@ -130,10 +135,10 @@ class TreeEditor extends React.Component {
             // add new arc
             arcs.push({
                 arcId,
-                label: token,
+                label: this.props.tokens[tokenId].label,
                 single: isSingle,
-                color: this.props.selectedToken.color,
-                fontColor: this.props.selectedToken.fontColor,
+                color: this.props.tokens[tokenId].color,
+                fontColor: this.props.tokens[tokenId].fontColor,
                 heightPlacement: this.state.placers[fromName].getHeightPlacement(arcId),
                 from: {
                     name: fromName,
