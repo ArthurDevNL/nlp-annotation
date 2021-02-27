@@ -1,6 +1,6 @@
 import React from 'react';
 import NavigationBar from './components/NavigationBar';
-import TextTree from './components/TextTree';
+import TreeEditor from './components/TreeEditor';
 import TextEditor from './components/TextEditor';
 import SplitPane from 'react-split-pane';
 import './css/split-pane.css'
@@ -102,7 +102,7 @@ class App extends React.Component {
                     onTokenSelect={this.handleTokenSelect}
                 />
                 <SplitPane split="horizontal" defaultSize={this.state.treeHeight}>
-                    <TextTree
+                    <TreeEditor
                         selectedToken={this.state.selectedToken} 
                         sentence={this.state.sentence}
                         words={this.state.words}
