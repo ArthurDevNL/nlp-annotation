@@ -51,11 +51,15 @@ class TextTree extends React.Component {
             this.setState({
                 selected: [index]
             });
+            
+            const { selected, arcs } = this.state;
+            const { selectedToken } = this.props;
+            const selectedId = selected.join('');
 
             // for single token (ROOT)
             if (this.isSingleToken) {
                 // check if there is same arc
-                if (this.state.arcs.filter(arc => arc.arcId === this.state.selected.join('') && arc.label === this.props.selectedToken.label) > -1) {
+                if (arcs.filter(arc => selectedId.length === 1 || arc.arcId === selectedId && arc.label === selectedToken.label) > -1) {
                     this.setWord(0, 0);
                 } else {
                     this.setState({ selected: [] });
@@ -65,8 +69,13 @@ class TextTree extends React.Component {
             this.setState({
                 selected: [this.state.selected[0], index]
             });
+            
+            const { selected, arcs } = this.state;
+            const { selectedToken } = this.props;
+            const selectedId = selected.join('');
+
             // check if there is same arc
-            if (this.state.arcs.filter(arc => arc.arcId === this.state.selected.join('') && arc.label === this.props.selectedToken.label) > -1) {
+            if (arcs.filter(arc => arc.arcId === selectedId && arc.label === selectedToken.label) > -1) {
                 this.setWord(0, 1);
             } else {
                 this.setState({ selected: [] });
@@ -108,8 +117,8 @@ class TextTree extends React.Component {
                 distance: 0
            });
         }
-            // console.log('get placement node: ', fromName, arcId, this.state.placers[fromName].placement(arcId));
-            // console.log('get placement node: ', toName, arcId, this.state.placers[toName].placement(arcId));
+        // console.log('get placement node: ', fromName, arcId, this.state.placers[fromName].placement(arcId));
+        // console.log('get placement node: ', toName, arcId, this.state.placers[toName].placement(arcId));
         
         this.setState(prevState => {
             let arcs = [...prevState.arcs];
@@ -202,9 +211,9 @@ class TextTree extends React.Component {
         if (this.layerRef.current) {
             this.layerRef.current.children.forEach((group, index) => {
                 if (this.state.selected.includes(index + 1)) {
-                    group.children[1].fill("#ffffff");
+                    group.children[0].children[1].fill("#ffffff");
                 } else {
-                    group.children[1].fill("#343434");
+                    group.children[0].children[1].fill("#343434");
                 }
             })
         }
@@ -239,7 +248,7 @@ class TextTree extends React.Component {
                                     : word.length * 20;
                         }
                         const rectHeight = 48;
-                        const gutter = 20;
+                        const gutter = 15;
                         
                         const xPosition = totalTreeLength + gutter;
                         const yPosition = this.state.config.y;
@@ -257,23 +266,25 @@ class TextTree extends React.Component {
                                 align="center"
                                 onMouseOver={() => this.setState({ hoveredToken: index })}
                                 onMouseLeave={() => this.setState({ hoveredToken: null })}>
-                                <Rect
-                                    width={rectLength}
-                                    height={rectHeight}
-                                    stroke={this.isHovered(index) || this.state.selected.includes(index) ? this.props.selectedToken.color : '#D2D2D2'}
-                                    strokeWidth={2}
-                                    cornerRadius={10}
-                                    fill={this.state.selected.includes(index) ? '#c25e5e' : '#D2D2D2'}
-                                    align="center" />
-                                <Text 
-                                    height={rectHeight}
-                                    verticalAlign="middle"
-                                    text={word} 
-                                    fill="#343434"
-                                    fontVariant="bold"
-                                    padding={10}
-                                    align="center"
-                                    fontSize={18} />
+                                <Label>
+                                    <Tag
+                                        width={rectLength}
+                                        height={rectHeight}
+                                        stroke={this.isHovered(index) || this.state.selected.includes(index) ? this.props.selectedToken.color : '#D2D2D2'}
+                                        strokeWidth={2}
+                                        cornerRadius={10}
+                                        fill={this.state.selected.includes(index) ? '#c25e5e' : '#D2D2D2'}
+                                        align="center" />
+                                    <Text 
+                                        height={rectHeight}
+                                        verticalAlign="middle"
+                                        text={word} 
+                                        fill="#343434"
+                                        fontVariant="bold"
+                                        padding={10}
+                                        align="center"
+                                        fontSize={18} />
+                                </Label>
                             </Group>
                         );
                     })}
@@ -300,10 +311,7 @@ class TextTree extends React.Component {
                             <Group
                                 key={`arc-${arc.label}-${index}`}
                                 x={arcTension}
-                                y={yPosition}
-                                onClick={() => this.removeArc(index)}
-                                onMouseOver={() => this.setState({ hoveredArc: index })}
-                                onMouseLeave={() => this.setState({ hoveredArc: null })}>
+                                y={yPosition}>
                                 <Arrow
                                     points={[
                                         fromPoint, 0,
@@ -317,6 +325,9 @@ class TextTree extends React.Component {
                                 <Label
                                     x={labelPosition}
                                     y={arcHeightTotal - 8}
+                                    onClick={() => this.removeArc(index)}
+                                    onMouseOver={() => this.setState({ hoveredArc: index })}
+                                    onMouseLeave={() => this.setState({ hoveredArc: null })}
                                     opacity={1}>
                                     <Tag 
                                         fill={color} 
@@ -329,6 +340,7 @@ class TextTree extends React.Component {
                                         fontStyle="bold"
                                         text={`${label}`}/>
                                 </Label>
+                                {/* "x" icon */}
                                 <Label
                                     x={labelPosition + (label.length * 6.8)}
                                     y={arcHeightTotal - 20}
@@ -342,7 +354,7 @@ class TextTree extends React.Component {
                                         padding={2}    
                                         fontSize={10}
                                         fontStyle="bold"
-                                        text="x"/>
+                                        text={`x`}/>
                                 </Label>
                             </Group>
                         )})}
