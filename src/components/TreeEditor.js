@@ -30,6 +30,12 @@ class TreeEditor extends React.Component {
         return this.props.singleToken.includes(this.props.selectedToken.id);
     }
 
+    get arcsWithIncomings() {
+        return this.state.arcs.filter(arc => {
+            return arc.arcId.length > 1 ? arc.arcId[1] : arc.arcId;
+        }).map(arc => arc.arcId.length > 1 ? arc.arcId[1] : arc.arcId[0]);
+    }
+
     wordClick(e, index) {
         // toggling
         if (this.state.selected.includes(index)) {
@@ -52,16 +58,16 @@ class TreeEditor extends React.Component {
                 selected: [index]
             });
             
-            const { selected, arcs } = this.state;
-            const { selectedToken } = this.props;
+            const { selected } = this.state;
             const selectedId = selected.join('');
 
             // for single token (ROOT)
             if (this.isSingleToken) {
-                // check if there is same arc
-                if (arcs.filter(arc => selectedId.length === 1 || arc.arcId === selectedId && arc.label === selectedToken.label) > -1) {
+                // check to have only 1 incoming
+                if (!this.arcsWithIncomings.includes(selectedId)) {
                     this.setWord(0, 0);
                 } else {
+                    console.log('arc has 1 incoming');
                     this.setState({ selected: [] });
                 }
             }
@@ -70,14 +76,15 @@ class TreeEditor extends React.Component {
                 selected: [this.state.selected[0], index]
             });
             
-            const { selected, arcs } = this.state;
-            const { selectedToken } = this.props;
+            const { selected } = this.state;
             const selectedId = selected.join('');
 
-            // check if there is same arc
-            if (arcs.filter(arc => arc.arcId === selectedId && arc.label === selectedToken.label) > -1) {
+            // check to have only 1 incoming
+            console.log(this.arcsWithIncomings);
+            if (!this.arcsWithIncomings.includes(selectedId[1])) {
                 this.setWord(0, 1);
             } else {
+                console.log('arc has 1 incoming');
                 this.setState({ selected: [] });
             }
         }
