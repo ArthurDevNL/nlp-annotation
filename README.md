@@ -1,3 +1,5 @@
+[![Node.js CI](https://github.com/ArthurDevNL/nlp-annotation/actions/workflows/node.js.yml/badge.svg)](https://github.com/ArthurDevNL/nlp-annotation/actions/workflows/node.js.yml)
+
 # Dependency Tree Annotator
 This repository contains a single page web-app that can be used to visualize and edit CoNLL-U files.
 
