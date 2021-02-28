@@ -27,8 +27,8 @@ class TreeEditor extends React.Component {
         };
     }
     
-    get isSingleToken() {
-        return this.props.singleToken.includes(this.props.selectedToken.id);
+    get isSingleRelation() {
+        return this.props.singleRelation.includes(this.props.selectedRelation.id);
     }
 
     get arcsWithOutgoing() {
@@ -61,13 +61,14 @@ class TreeEditor extends React.Component {
             
             const { selected } = this.state;
             const selectedId = selected.join('');
+
             // for single token (ROOT)
-            if (this.isSingleToken) {
+            if (this.isSingleRelation) {
                 // check to have only 1 outgoing
                 if (this.state.arcs.filter(arc => arc.arcId.length === 1) > -1 && !this.arcsWithOutgoing.includes(selectedId)) {
                     const indexFrom = this.state.selected[0] - 1;
-                    const tokenId = this.props.selectedToken.id;
-                    this.createArc(indexFrom, indexFrom, tokenId);
+                    const relationId = this.props.selectedRelation.id;
+                    this.createArc(indexFrom, indexFrom, relationId);
                 } else {
                     this.setState({ selected: [] });
                 }
@@ -83,16 +84,15 @@ class TreeEditor extends React.Component {
             if (!this.arcsWithOutgoing.includes(selectedId[0])) {
                 const indexFrom = this.state.selected[0] - 1;
                 const indexTo = this.state.selected[1] - 1;
-                const tokenId = this.props.selectedToken.id;
-                this.createArc(indexFrom, indexTo, tokenId);
+                const relationId = this.props.selectedRelation.id;
+                this.createArc(indexFrom, indexTo, relationId);
             } else {
                 this.setState({ selected: [] });
             }
         }
     }
 
-    createArc(indexFrom, indexTo, tokenId) {
-        // console.log('createArc', indexFrom, indexTo, tokenId);
+    createArc(indexFrom, indexTo, relationId) {
         // proceed connect the line
         // update text editor -- event
         // reset selected
@@ -103,10 +103,6 @@ class TreeEditor extends React.Component {
         const toName = to.attrs.name;
         const isSingle = indexFrom === indexTo ? true : false
         
-
-        // console.log('from', from, 'x:', from.x(), 'y:', from.y(), 'width: ', from.children[0].width());
-        // console.log('to', to, 'x:', to.x(), 'y:', to.y(), 'width: ', to.children[0].width());
-
         this.state.placers[fromName].add({
             arcId,
             from: from.x(),
@@ -124,19 +120,17 @@ class TreeEditor extends React.Component {
                 distance: 0
            });
         }
-        // console.log('get placement node: ', fromName, arcId, this.state.placers[fromName].placement(arcId));
-        // console.log('get placement node: ', toName, arcId, this.state.placers[toName].placement(arcId));
         
         this.setState(prevState => {
             let arcs = [...prevState.arcs];
-            
+
             // add new arc
             arcs.push({
                 arcId,
-                label: this.props.tokens[tokenId].label,
+                label: this.props.relations[relationId].label,
                 single: isSingle,
-                color: this.props.tokens[tokenId].color,
-                fontColor: this.props.tokens[tokenId].fontColor,
+                color: this.props.relations[relationId].color,
+                fontColor: this.props.relations[relationId].fontColor,
                 heightPlacement: this.state.placers[fromName].getHeightPlacement(arcId),
                 from: {
                     name: fromName,
@@ -183,7 +177,6 @@ class TreeEditor extends React.Component {
                 this.setState({
                     placers: arrObj
                 });    
-                // console.log('setup placer', arrObj);
                 clearInterval(intervalId);
             }
         }, 150);
@@ -273,10 +266,10 @@ class TreeEditor extends React.Component {
                                     <Tag
                                         width={rectLength}
                                         height={rectHeight}
-                                        stroke={this.isHovered(index) || this.state.selected.includes(index) ? this.props.selectedToken.color : '#D2D2D2'}
+                                        stroke={this.isHovered(index) || this.state.selected.includes(index) ? this.props.selectedRelation.color : '#D2D2D2'}
                                         strokeWidth={2}
                                         cornerRadius={10}
-                                        fill={this.state.selected.includes(index) ? this.props.selectedToken.color : '#D2D2D2'}
+                                        fill={this.state.selected.includes(index) ? this.props.selectedRelation.color : '#D2D2D2'}
                                         align="center" />
                                     <Text 
                                         height={rectHeight}

@@ -19,11 +19,11 @@ const color = {
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.handleTokenSelect = this.handleTokenSelect.bind(this);
+        this.handleRelationSelect = this.handleRelationSelect.bind(this);
         this.handleSentenceChange = this.handleSentenceChange.bind(this);
         this.addWord = this.addWord.bind(this);
         this.state = {
-            tokens: [
+            relations: [
                 {
                     label: 'ROOT',
                     color: color.black, // default grey: #D2D2D2
@@ -43,8 +43,8 @@ class App extends React.Component {
                     id: '2'
                 },
             ],
-            singleToken: ['0'], // which token don't need to pair with other // id
-            selectedToken: null,
+            singleRelation: ['0'], // which token don't need to pair with other // id
+            selectedRelation: null,
             sentence: 'Drop the mic .',
             words: [],
             treeHeight: window.innerHeight/1.6,
@@ -53,7 +53,7 @@ class App extends React.Component {
 
     componentDidMount() {
         this.setState({
-            selectedToken: this.state.tokens[0]
+            selectedRelation: this.state.relations[0]
         });
         this.setWords(this.state.sentence);
     }
@@ -69,9 +69,8 @@ class App extends React.Component {
         });
     }
 
-    handleTokenSelect(token) {
-        this.setState(
-            { selectedToken: token}
+    handleRelationSelect(relation) {
+        this.setState({ selectedRelation: relation}
         )
     }
 
@@ -93,22 +92,22 @@ class App extends React.Component {
     }
 
     render() {
-        const tokens = this.state.tokens;
+        const relations = this.state.relations;
         return (
             <div className="App">
                 <NavigationBar 
-                    tokens={tokens} 
-                    selectedToken={this.state.selectedToken}
-                    onTokenSelect={this.handleTokenSelect}
+                    relations={relations} 
+                    selectedRelation={this.state.selectedRelation}
+                    onRelationSelect={this.handleRelationSelect}
                 />
                 <SplitPane split="horizontal" defaultSize={this.state.treeHeight}>
                     <TreeEditor
-                        selectedToken={this.state.selectedToken} 
+                        selectedRelation={this.state.selectedRelation} 
                         sentence={this.state.sentence}
                         words={this.state.words}
                         arcs={this.state.arcs}
-                        singleToken={this.state.singleToken}
-                        tokens={this.state.tokens}
+                        singleRelation={this.state.singleRelation}
+                        relations={this.state.relations}
                         height={this.state.treeHeight}
                         className="split-pane--top"
                     />

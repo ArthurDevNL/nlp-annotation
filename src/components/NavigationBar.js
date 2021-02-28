@@ -3,22 +3,22 @@ import React from 'react';
 class NavigationBar extends React.Component {
     constructor(props) {
         super(props);
-        this.selectToken = this.selectToken.bind(this);
+        this.selectRelation = this.selectRelation.bind(this);
     }
 
-    selectToken(e, token) {
-        this.props.onTokenSelect(token);
+    selectRelation(e, token) {
+        this.props.onRelationSelect(token);
     }
 
     render() {
-        const tokenList = this.props.tokens.map(token => {
+        const relationsList = this.props.relations.map(relation => {
             return(
-                <button className={"token" + (this.props.selectedToken && this.props.selectedToken.id === token.id ? ' active' : '')} key={token.id} onClick={e => this.selectToken(e, token)}>{token.label}</button>
+                <button className={"token" + (this.props.selectedRelation && this.props.selectedRelation.id === relation.id ? ' active' : '')} key={relation.id} onClick={e => this.selectRelation(e, relation)}>{relation.label}</button>
             );
         });
         return (
             <div className="nav">
-                {tokenList}
+                {relationsList}
             </div>
         );
     }
