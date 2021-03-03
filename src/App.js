@@ -22,6 +22,7 @@ class App extends React.Component {
         this.handleRelationSelect = this.handleRelationSelect.bind(this);
         this.handleSentenceChange = this.handleSentenceChange.bind(this);
         this.addToken = this.addToken.bind(this);
+        this.onResize = this.onResize.bind(this);
         this.state = {
             relations: [
                 {
@@ -78,6 +79,10 @@ class App extends React.Component {
         this.setTokens(_sentence);
     }
 
+    onResize(size) {
+        this.setState({treeHeight : size});
+    }
+
     addToken(e, word) {
         word = word ? word : 'new';
         this.setState(prevState => {
@@ -100,7 +105,9 @@ class App extends React.Component {
                     selectedRelation={this.state.selectedRelation}
                     onRelationSelect={this.handleRelationSelect}
                 />
-                <SplitPane split="horizontal" defaultSize={this.state.treeHeight}>
+                <SplitPane split="horizontal" 
+                    defaultSize={this.state.treeHeight}
+                    onChange={(size) => this.onResize(size)}>
                     <TreeEditor
                         selectedRelation={this.state.selectedRelation} 
                         sentence={this.state.sentence}
