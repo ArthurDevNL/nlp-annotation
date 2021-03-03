@@ -5,7 +5,7 @@ import Placer from "./Placer";
 class TreeEditor extends React.Component {
     constructor(props) {
         super(props);
-        this.wordClick = this.wordClick.bind(this);
+        this.tokenClick = this.tokenClick.bind(this);
         this.createArc = this.createArc.bind(this);
         
         // word group reference
@@ -13,7 +13,7 @@ class TreeEditor extends React.Component {
         this.layerRef = React.createRef();
 
         this.state = {
-            selected: [],
+            selectedTokens: [],
             hoveredToken: null,
             hoveredArc: null,
             arcs: [],
@@ -37,14 +37,14 @@ class TreeEditor extends React.Component {
         }).map(arc => arc.arcId[0]);
     }
 
-    wordClick(e, index) {
+    tokenClick(e, index) {
         // toggling
-        if (this.state.selected.includes(index)) {
-            const _index = this.state.selected.indexOf(index);
+        if (this.state.selectedTokens.includes(index)) {
+            const _index = this.state.selectedTokens.indexOf(index);
             if (_index > -1) {
-                let words = [...this.state.selected];
-                words.splice(_index, 1);
-                this.setState({ selected: words });
+                let tokens = [...this.state.selectedTokens];
+                tokens.splice(_index, 1);
+                this.setState({ selected: tokens });
             }
             return;
         }
@@ -54,40 +54,40 @@ class TreeEditor extends React.Component {
 
     addSelected(index) {
         // set selected word
-        if (!this.state.selected[0] || this.state.selected.length >= 2) {
+        if (this.state.selectedTokens.length == 0 || this.state.selectedTokens.length >= 2) {
             this.setState({
-                selected: [index]
+                selectedTokens: [index]
             });
             
-            const { selected } = this.state;
+            const { selectedTokens: selected } = this.state;
             const selectedId = selected.join('');
 
             // for single token (ROOT)
             if (this.isSingleRelation) {
                 // check to have only 1 outgoing
-                if (this.state.arcs.filter(arc => arc.arcId.length === 1) > -1 && !this.arcsWithOutgoing.includes(selectedId)) {
-                    const indexFrom = this.state.selected[0] - 1;
+                if (this.state.arcs.filter(arc => arc.arcId.length === 1) > -1) {
+                    const indexFrom = this.state.selectedTokens[0];
                     const relationId = this.props.selectedRelation.id;
                     this.createArc(indexFrom, indexFrom, relationId);
                 } else {
-                    this.setState({ selected: [] });
+                    this.setState({ selectedTokens: [] });
                 }
             }
         } else {
             this.setState({
-                selected: [this.state.selected[0], index]
+                selectedTokens: [this.state.selectedTokens[0], index]
             });
-            
-            const { selected } = this.state;
+            const { selectedTokens: selected } = this.state;
             const selectedId = selected.join('');
+
             // check to have only 1 outgoing`
             if (!this.arcsWithOutgoing.includes(selectedId[0])) {
-                const indexFrom = this.state.selected[0] - 1;
-                const indexTo = this.state.selected[1] - 1;
+                const indexFrom = this.state.selectedTokens[0];
+                const indexTo = this.state.selectedTokens[1];
                 const relationId = this.props.selectedRelation.id;
                 this.createArc(indexFrom, indexTo, relationId);
             } else {
-                this.setState({ selected: [] });
+                this.setState({ selectedTokens: [] });
             }
         }
     }
@@ -96,27 +96,27 @@ class TreeEditor extends React.Component {
         // proceed connect the line
         // update text editor -- event
         // reset selected
-        const arcId = this.state.selected.join('');
-        const from = this.layerRef.current.children[indexFrom];
-        const to = this.layerRef.current.children[indexTo];
-        const fromName = from.attrs.name;
-        const toName = to.attrs.name;
+        const arcId = this.state.selectedTokens.join('');
+        const fromGroup = this.layerRef.current.children[indexFrom];
+        const toGroup = this.layerRef.current.children[indexTo];
+        const fromId = fromGroup.attrs.id;
+        const toId = toGroup.attrs.id;
         const isSingle = indexFrom === indexTo ? true : false
-        
-        this.state.placers[fromName].add({
+
+        this.state.placers[fromId].add({
             arcId,
-            from: from.x(),
-            to: to.x(),
-            width: from.children[0].width(),
+            from: fromGroup.x(),
+            to: toGroup.x(),
+            width: fromGroup.children[0].width(),
             distance: 0
         });
 
         if (!isSingle) {
-           this.state.placers[toName].add({
+           this.state.placers[toId].add({
                 arcId,
-                from: to.x(),
-                to: from.x(),
-                width: to.children[0].width(),
+                from: toGroup.x(),
+                to: fromGroup.x(),
+                width: toGroup.children[0].width(),
                 distance: 0
            });
         }
@@ -131,25 +131,25 @@ class TreeEditor extends React.Component {
                 single: isSingle,
                 color: this.props.relations[relationId].color,
                 fontColor: this.props.relations[relationId].fontColor,
-                heightPlacement: this.state.placers[fromName].getHeightPlacement(arcId),
+                heightPlacement: this.state.placers[fromId].getHeightPlacement(arcId),
                 from: {
-                    name: fromName,
-                    xPoint: this.state.placers[fromName].getPlacement(arcId)
+                    id: fromId,
+                    xPoint: this.state.placers[fromId].getPlacement(arcId)
                 },
                 to: {
-                    name: toName,
-                    xPoint: this.state.placers[toName].getPlacement(arcId)
+                    id: toId,
+                    xPoint: this.state.placers[toId].getPlacement(arcId)
                 }
             });
             arcs = arcs.map((arc, index) => {
-                arc.from.xPoint = this.state.placers[arc.from.name].getPlacement(arc.arcId);
-                arc.to.xPoint = this.state.placers[arc.to.name] ? this.state.placers[arc.to.name].getPlacement(arc.arcId) : 0;
+                arc.from.xPoint = this.state.placers[arc.from.id].getPlacement(arc.arcId);
+                arc.to.xPoint = this.state.placers[arc.to.id] ? this.state.placers[arc.to.id].getPlacement(arc.arcId) : 0;
                 arc.heightPlacement = index;
                 return arc;
             });
             return { 
                 arcs,
-                selected: []
+                selectedTokens: []
             };
         });
     }
@@ -169,10 +169,10 @@ class TreeEditor extends React.Component {
     componentDidMount() {
         let intervalId = setInterval(() => {
             // setup Placers
-            if (this.props.words.length) {
+            if (this.props.tokens.length) {
                 let arrObj = {}
-                for (let word of this.props.words) {
-                    arrObj[word.form] = new Placer({name: word.form})
+                for (let token of this.props.tokens) {
+                    arrObj[token.id] = new Placer({id: token.id})
                 }
                 this.setState({
                     placers: arrObj
@@ -184,19 +184,19 @@ class TreeEditor extends React.Component {
 
     componentDidUpdate(prevProps) {
         // re-create Placers
-        if (this.props.words !== prevProps.words) { 
+        if (this.props.tokens !== prevProps.tokens) { 
             let arrObj = {}
-            for (let word of this.props.words) {
-                arrObj[word.form] = new Placer({name: word.form});
+            for (let token of this.props.tokens) {
+                arrObj[token.id] = new Placer({id: token.id});
             }
             // update
-            this.props.words.forEach(word => {
-                if (!this.state.placers[word.form]) {
+            this.props.tokens.forEach(token => {
+                if (!this.state.placers[token.id]) {
                     this.setState(prevState => {
-                        Object.keys(arrObj).forEach(_word => {
-                            arrObj[_word] = prevState.placers[_word];
+                        Object.keys(arrObj).forEach(_tokenId => {
+                            arrObj[_tokenId] = prevState.placers[_tokenId];
                         });
-                        arrObj[word.form] = new Placer({name: word.form});
+                        arrObj[token.id] = new Placer({id: token.id});
                         return { 
                             placers: arrObj,
                             // for now remove all arcs
@@ -211,7 +211,7 @@ class TreeEditor extends React.Component {
         // change the color of selected to white
         if (this.layerRef.current) {
             this.layerRef.current.children.forEach((group, index) => {
-                if (this.state.selected.includes(index + 1)) {
+                if (this.state.selectedTokens.includes(index)) {
                     group.children[0].children[1].fill("#ffffff");
                 } else {
                     group.children[0].children[1].fill("#343434");
@@ -235,13 +235,12 @@ class TreeEditor extends React.Component {
                     ref={this.layerRef}
                     name="word-layer" 
                     align="center">
-                    {this.props.words.map((connllu, index) => {
-                        const {form: word} = connllu;
-                        index += 1;
+                    {this.props.tokens.map((conllu, index) => {
+                        const {form: form} = conllu;
                         let rectLength = 20;
                         var ctx = this.layerRef?.current?.canvas?.context;
-                        if (word && ctx) {
-                            rectLength = Math.round(ctx.measureText(word).width) * 2;
+                        if (form && ctx) {
+                            rectLength = Math.round(ctx.measureText(form).width) * 2;
                         }
                         const rectHeight = 48;
                         const gutter = 30;
@@ -253,11 +252,12 @@ class TreeEditor extends React.Component {
                         return (
                             <Group 
                                 ref={this.groupRef}
-                                key={`word-${word}-${index}`}
-                                name={word}
+                                key={`word-${form}-${conllu.id}`}
+                                name={form}
+                                id={conllu.id}
                                 x={xPosition}
                                 y={yPosition}
-                                onClick={(e) => this.wordClick(e, index)}
+                                onClick={(e) => this.tokenClick(e, index)}
                                 draggable={false}
                                 align="center"
                                 onMouseOver={() => this.setState({ hoveredToken: index })}
@@ -266,15 +266,15 @@ class TreeEditor extends React.Component {
                                     <Tag
                                         width={rectLength}
                                         height={rectHeight}
-                                        stroke={this.isHovered(index) || this.state.selected.includes(index) ? this.props.selectedRelation.color : '#D2D2D2'}
+                                        stroke={this.isHovered(index) || this.state.selectedTokens.includes(index) ? this.props.selectedRelation.color : '#D2D2D2'}
                                         strokeWidth={2}
                                         cornerRadius={10}
-                                        fill={this.state.selected.includes(index) ? this.props.selectedRelation.color : '#D2D2D2'}
+                                        fill={this.state.selectedTokens.includes(index) ? this.props.selectedRelation.color : '#D2D2D2'}
                                         align="center" />
                                     <Text 
                                         height={rectHeight}
                                         verticalAlign="middle"
-                                        text={word} 
+                                        text={form} 
                                         fill="#343434"
                                         fontVariant="bold"
                                         padding={10}

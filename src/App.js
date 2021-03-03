@@ -21,7 +21,7 @@ class App extends React.Component {
         super(props);
         this.handleRelationSelect = this.handleRelationSelect.bind(this);
         this.handleSentenceChange = this.handleSentenceChange.bind(this);
-        this.addWord = this.addWord.bind(this);
+        this.addToken = this.addToken.bind(this);
         this.state = {
             relations: [
                 {
@@ -45,8 +45,8 @@ class App extends React.Component {
             ],
             singleRelation: ['0'], // which token don't need to pair with other // id
             selectedRelation: null,
-            sentence: 'Drop the mic .',
-            words: [],
+            sentence: 'Drop the mic . test test test',
+            tokens: [],
             treeHeight: window.innerHeight/1.6,
         }
     }
@@ -55,17 +55,17 @@ class App extends React.Component {
         this.setState({
             selectedRelation: this.state.relations[0]
         });
-        this.setWords(this.state.sentence);
+        this.setTokens(this.state.sentence);
     }
 
-    setWords(sentence) {
-        let words = sentence.trim().split(' ');
-        words = words.map((word, index) => {
-            return new ConnllU({id: index + 1, form: word});
+    setTokens(sentence) {
+        let tokens = sentence.trim().split(' ');
+        tokens = tokens.map((word, index) => {
+            return new ConnllU({id: index, form: word});
         });
         this.setState({
             sentence,
-            words
+            tokens: tokens
         });
     }
 
@@ -75,18 +75,18 @@ class App extends React.Component {
     }
 
     handleSentenceChange(_sentence) {
-        this.setWords(_sentence);
+        this.setTokens(_sentence);
     }
 
-    addWord(e, word) {
+    addToken(e, word) {
         word = word ? word : 'new';
         this.setState(prevState => {
-            let words = [...prevState.words];
-            words.push(new ConnllU({id: words.length, form: word}));
-            const wordsText = words.map(word => word.form);
+            let tokens = [...prevState.tokens];
+            tokens.push(new ConnllU({id: tokens.length, form: word}));
+            const wordsText = tokens.map(token => token.form);
             return {
                 sentence: wordsText.join(' '),
-                words
+                tokens: tokens
             };
         })
     }
@@ -104,7 +104,7 @@ class App extends React.Component {
                     <TreeEditor
                         selectedRelation={this.state.selectedRelation} 
                         sentence={this.state.sentence}
-                        words={this.state.words}
+                        tokens={this.state.tokens}
                         arcs={this.state.arcs}
                         singleRelation={this.state.singleRelation}
                         relations={this.state.relations}
@@ -113,7 +113,7 @@ class App extends React.Component {
                     />
                     <PlainTextEditor
                         sentence={this.state.sentence}
-                        addWord={this.addWord}>
+                        addToken={this.addToken}>
                     </PlainTextEditor>
                     {/*
                     <TextEditor 

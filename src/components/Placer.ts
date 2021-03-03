@@ -17,11 +17,11 @@ export default class Placer extends Object {
     list: Array<Point> = [];
     listObj: any = {};
     width: number = 0;
-    name: string = '';
+    id: number = -1;
 
     constructor(props: any) {
         super(props);
-        this.name = props.name;
+        this.id = props.id;
     }
 
     add(point: Point) {

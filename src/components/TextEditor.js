@@ -14,7 +14,7 @@ export default function TextEditor(props) {
     return(
         <div className="text-editor">
             <div className="separator">
-                <div className="separator__add" onClick={props.addWord}></div>
+                <div className="separator__add" onClick={props.addToken}></div>
                 <div className="separator__drag"></div>
             </div>
             <div className="text-editor__body">
