@@ -29,22 +29,22 @@ class App extends React.Component {
                     label: 'ROOT',
                     color: color.black, // default grey: #D2D2D2
                     fontColor: color.white, // default black: #343434
-                    id: '0' // same with array index
+                    id: 0 // same with array index
                 },
                 {
                     label: 'SUBJECT',
                     color: color.red,
                     fontColor: color.white,
-                    id: '1'
+                    id: 1
                 },
                 {
                     label: 'DOBJ',
                     color: color.green,
                     fontColor: color.white,
-                    id: '2'
+                    id: 2
                 },
             ],
-            singleRelation: ['0'], // which token don't need to pair with other // id
+            singleRelation: [0], // which token don't need to pair with other // id
             selectedRelation: null,
             sentence: 'Drop the mic . test test test',
             tokens: [],
