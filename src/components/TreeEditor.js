@@ -37,26 +37,26 @@ class TreeEditor extends React.Component {
         }).map(arc => arc.arcId[0]);
     }
 
-    tokenClick(e, index) {
+    tokenClick(e, tokenId) {
         // toggling
-        if (this.state.selectedTokens.includes(index)) {
-            const _index = this.state.selectedTokens.indexOf(index);
+        if (this.state.selectedTokens.includes(tokenId)) {
+            const _index = this.state.selectedTokens.indexOf(tokenId);
             if (_index > -1) {
                 let tokens = [...this.state.selectedTokens];
                 tokens.splice(_index, 1);
-                this.setState({ selected: tokens });
+                this.setState({ selectedTokens: tokens });
             }
             return;
         }
 
-        this.addSelected(index);
+        this.addSelected(tokenId);
     }
 
-    addSelected(index) {
+    addSelected(tokenId) {
         // set selected word
         if (this.state.selectedTokens.length == 0 || this.state.selectedTokens.length >= 2) {
             this.setState({
-                selectedTokens: [index]
+                selectedTokens: [tokenId]
             });
             
             const { selectedTokens: selected } = this.state;
@@ -75,33 +75,33 @@ class TreeEditor extends React.Component {
             }
         } else {
             this.setState({
-                selectedTokens: [this.state.selectedTokens[0], index]
+                selectedTokens: [this.state.selectedTokens[0], tokenId]
             });
             const { selectedTokens: selected } = this.state;
             const selectedId = selected.join('');
 
             // check to have only 1 outgoing`
             if (!this.arcsWithOutgoing.includes(selectedId[0])) {
-                const indexFrom = this.state.selectedTokens[0];
-                const indexTo = this.state.selectedTokens[1];
+                const idFrom = this.state.selectedTokens[0];
+                const idTo = this.state.selectedTokens[1];
                 const relationId = this.props.selectedRelation.id;
-                this.createArc(indexFrom, indexTo, relationId);
+                this.createArc(idFrom, idTo, relationId);
             } else {
                 this.setState({ selectedTokens: [] });
             }
         }
     }
 
-    createArc(indexFrom, indexTo, relationId) {
+    createArc(idFrom, idTo, relationId) {
         // proceed connect the line
         // update text editor -- event
         // reset selected
         const arcId = this.state.selectedTokens.join('');
-        const fromGroup = this.layerRef.current.children[indexFrom];
-        const toGroup = this.layerRef.current.children[indexTo];
+        const fromGroup = this.layerRef.current.children[idFrom];
+        const toGroup = this.layerRef.current.children[idTo];
         const fromId = fromGroup.attrs.id;
         const toId = toGroup.attrs.id;
-        const isSingle = indexFrom === indexTo ? true : false
+        const isSingle = idFrom === idTo ? true : false
 
         this.state.placers[fromId].add({
             arcId,
@@ -154,16 +154,16 @@ class TreeEditor extends React.Component {
         });
     }
 
-    removeArc(index) {
+    removeArc(id) {
         this.setState(prevState => {
             const newArcs = [...prevState.arcs];
-            newArcs.splice(index, 1);
+            newArcs.splice(id, 1);
             return { arcs: newArcs };
         });
     }
 
-    isHovered(index) {
-        return index === this.state.hoveredToken;
+    isHovered(id) {
+        return id === this.state.hoveredToken;
     }
 
     componentDidMount() {
@@ -189,36 +189,34 @@ class TreeEditor extends React.Component {
             for (let token of this.props.tokens) {
                 arrObj[token.id] = new Placer({id: token.id});
             }
-            // update
-            this.props.tokens.forEach(token => {
-                if (!this.state.placers[token.id]) {
-                    this.setState(prevState => {
-                        Object.keys(arrObj).forEach(_tokenId => {
-                            arrObj[_tokenId] = prevState.placers[_tokenId];
-                        });
-                        arrObj[token.id] = new Placer({id: token.id});
-                        return { 
-                            placers: arrObj,
-                            // for now remove all arcs
-                            // TODO: only remove arcs that word are removed
-                            arcs: []
-                        };
-                    });
-                }
+            this.setState({ placers: arrObj }, () => {
+                // update
+                this.props.tokens.forEach(token => {
+                    if (token.head != null) {
+                        console.log(this.props.relations.map(r => r.label.toLowerCase()), token.deprel.toLowerCase());
+                        let relations = this.props.relations.filter(r => r.label.toLowerCase() === token.deprel.toLowerCase())
+                        console.log(token);
+                        if (relations.length == 1) {
+                            console.log("created arc");
+                            let relationId = relations[0];
+                            this.createArc(token.id, token.head, relationId);
+                        }
+                    }
+                });
+                this.setState({ selectedTokens: [] });
             });
         }
 
         // change the color of selected to white
         if (this.layerRef.current) {
-            this.layerRef.current.children.forEach((group, index) => {
-                if (this.state.selectedTokens.includes(index)) {
+            this.layerRef.current.children.forEach((group, id) => {
+                if (this.state.selectedTokens.includes(id)) {
                     group.children[0].children[1].fill("#ffffff");
                 } else {
                     group.children[0].children[1].fill("#343434");
                 }
             })
-        }
-        
+        }   
     }
 
     render() {
@@ -235,8 +233,8 @@ class TreeEditor extends React.Component {
                     ref={this.layerRef}
                     name="word-layer" 
                     align="center">
-                    {this.props.tokens.map((conllu, index) => {
-                        const {form: form} = conllu;
+                    {this.props.tokens.map((token, index) => {
+                        const {form: form} = token;
                         let rectLength = 20;
                         var ctx = this.layerRef?.current?.canvas?.context;
                         if (form && ctx) {
@@ -252,24 +250,24 @@ class TreeEditor extends React.Component {
                         return (
                             <Group 
                                 ref={this.groupRef}
-                                key={`word-${form}-${conllu.id}`}
+                                key={`word-${form}-${token.id}`}
                                 name={form}
-                                id={conllu.id}
+                                id={token.id}
                                 x={xPosition}
                                 y={yPosition}
-                                onClick={(e) => this.tokenClick(e, index)}
+                                onClick={(e) => this.tokenClick(e, token.id)}
                                 draggable={false}
                                 align="center"
-                                onMouseOver={() => this.setState({ hoveredToken: index })}
+                                onMouseOver={() => this.setState({ hoveredToken: token.id })}
                                 onMouseLeave={() => this.setState({ hoveredToken: null })}>
                                 <Label>
                                     <Tag
                                         width={rectLength}
                                         height={rectHeight}
-                                        stroke={this.isHovered(index) || this.state.selectedTokens.includes(index) ? this.props.selectedRelation.color : '#D2D2D2'}
+                                        stroke={this.isHovered(token.id) || this.state.selectedTokens.includes(token.id) ? this.props.selectedRelation.color : '#D2D2D2'}
                                         strokeWidth={2}
                                         cornerRadius={10}
-                                        fill={this.state.selectedTokens.includes(index) ? this.props.selectedRelation.color : '#D2D2D2'}
+                                        fill={this.state.selectedTokens.includes(token.id) ? this.props.selectedRelation.color : '#D2D2D2'}
                                         align="center" />
                                     <Text 
                                         height={rectHeight}

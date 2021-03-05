@@ -1,7 +1,6 @@
 import React from 'react';
 import NavigationBar from './components/NavigationBar';
 import TreeEditor from './components/TreeEditor';
-import TextEditor from './components/TextEditor';
 import SplitPane from 'react-split-pane';
 import './css/split-pane.css'
 import ConnllU from './components/ConnllU.ts';
@@ -20,7 +19,6 @@ class App extends React.Component {
     constructor(props) {
         super(props);
         this.handleRelationSelect = this.handleRelationSelect.bind(this);
-        this.handleSentenceChange = this.handleSentenceChange.bind(this);
         this.addToken = this.addToken.bind(this);
         this.onResize = this.onResize.bind(this);
         this.state = {
@@ -32,7 +30,7 @@ class App extends React.Component {
                     id: 0 // same with array index
                 },
                 {
-                    label: 'SUBJECT',
+                    label: 'NSUBJ',
                     color: color.red,
                     fontColor: color.white,
                     id: 1
@@ -43,10 +41,21 @@ class App extends React.Component {
                     fontColor: color.white,
                     id: 2
                 },
+                {
+                    label: 'PUNCT',
+                    color: color.green,
+                    fontColor: color.white,
+                    id: 3
+                },
+                {
+                    label: 'DET',
+                    color: color.green,
+                    fontColor: color.white,
+                    id: 4
+                },
             ],
             singleRelation: [0], // which token don't need to pair with other // id
             selectedRelation: null,
-            sentence: 'Drop the mic . test test test',
             tokens: [],
             treeHeight: window.innerHeight/1.6,
         }
@@ -56,27 +65,22 @@ class App extends React.Component {
         this.setState({
             selectedRelation: this.state.relations[0]
         });
-        this.setTokens(this.state.sentence);
+        this.setTokens();
     }
 
-    setTokens(sentence) {
-        let tokens = sentence.trim().split(' ');
-        tokens = tokens.map((word, index) => {
-            return new ConnllU({id: index, form: word});
-        });
+    setTokens() {
         this.setState({
-            sentence,
-            tokens: tokens
+            tokens: [
+                new ConnllU({id: 1, form: "Drop", head: 0, deprel: "root" }),
+                new ConnllU({id: 2, form: "the", head: 3, deprel: "det" }),
+                new ConnllU({id: 3, form: "mic", head: 1, deprel: "dobj" }),
+                new ConnllU({id: 4, form: ".", head: 1, deprel: "punct" })
+            ]
         });
     }
 
     handleRelationSelect(relation) {
-        this.setState({ selectedRelation: relation}
-        )
-    }
-
-    handleSentenceChange(_sentence) {
-        this.setTokens(_sentence);
+        this.setState({ selectedRelation: relation})
     }
 
     onResize(size) {
@@ -84,16 +88,16 @@ class App extends React.Component {
     }
 
     addToken(e, word) {
-        word = word ? word : 'new';
-        this.setState(prevState => {
-            let tokens = [...prevState.tokens];
-            tokens.push(new ConnllU({id: tokens.length, form: word}));
-            const wordsText = tokens.map(token => token.form);
-            return {
-                sentence: wordsText.join(' '),
-                tokens: tokens
-            };
-        })
+        // word = word ? word : 'new';
+        // this.setState(prevState => {
+        //     let tokens = [...prevState.tokens];
+        //     tokens.push(new ConnllU({id: tokens.length, form: word}));
+        //     const wordsText = tokens.map(token => token.form);
+        //     return {
+        //         sentence: wordsText.join(' '),
+        //         tokens: tokens
+        //     };
+        // })
     }
 
     render() {
@@ -122,15 +126,6 @@ class App extends React.Component {
                         sentence={this.state.sentence}
                         addToken={this.addToken}>
                     </PlainTextEditor>
-                    {/*
-                    <TextEditor 
-                        text={this.state.sentence} 
-                        words={this.state.words}
-                        onSentenceChange={this.handleSentenceChange} 
-                        addWord={this.addWord}
-                        className="split-pane--bottom">    
-                    </TextEditor>
-                    */}
                 </SplitPane>
             </div>
         );
