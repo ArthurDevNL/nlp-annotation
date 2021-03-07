@@ -86,6 +86,8 @@ class TreeEditor extends React.Component {
         let totalTreeLength = 0;
         totalTreeLength += Math.round(window.innerWidth / 8);
 
+        const arcIncrement = -20;
+        var arcHeight = -50;
         let tokenArcs = {};
         Object.keys(this.props.tokens).forEach((tid) => {
             let t = this.props.tokens[tid];
@@ -96,16 +98,18 @@ class TreeEditor extends React.Component {
             }
         });
 
-        const gutter = 30;
+        const gutter = 35;
         let tokenPositions = {};
         Object.keys(this.props.tokens).forEach((tid) => {
             var token = this.props.tokens[tid];
             var ctx = this.layerRef?.current?.canvas?.context;
             let rectLength = 20;
             if (token.form && ctx) {
-                rectLength = Math.round(ctx.measureText(token.form).width) * 2;
+                ctx.font = "18px Arial";
+                rectLength = Math.round(ctx.measureText(token.form).width);
             }
-            
+            console.log(rectLength);
+
             tokenPositions[token.id] = {
                 x: totalTreeLength,
                 y: this.state.config.y,
@@ -178,10 +182,12 @@ class TreeEditor extends React.Component {
                             return null;
                         }
                         
-                        const arcHeightTotal = -50;
+                        const arcHeightTotal = arcHeight;
+                        arcHeight += arcIncrement;
                         
                         var fromToken = tokenPositions[tid];
-                        var fromPoint = fromToken.x + fromToken.width / 2;
+
+                        var fromPoint = fromToken.x + fromToken.width;
                         var toPoint = fromPoint;
                         if (token.head !== undefined && this.props.tokens[token.head] !== undefined) {
                             var toToken = tokenPositions[token.head];

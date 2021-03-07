@@ -13,6 +13,7 @@ const color = {
     red: '#c45d5c',
     green: '#00b050',
     blue: '#1d4c8c',
+    orange: '#e28743'
 }
 
 class App extends React.Component {
@@ -43,13 +44,13 @@ class App extends React.Component {
                 },
                 {
                     label: 'PUNCT',
-                    color: color.green,
+                    color: color.blue,
                     fontColor: color.white,
                     id: 3
                 },
                 {
                     label: 'DET',
-                    color: color.green,
+                    color: color.orange,
                     fontColor: color.white,
                     id: 4
                 },
@@ -73,8 +74,8 @@ class App extends React.Component {
             tokens: {
                 1: new ConnllU({id: 1, form: "Drop", head: 0, deprel: "root" }),
                 2: new ConnllU({id: 2, form: "the", head: 3, deprel: "det" }),
-                3: new ConnllU({id: 3, form: "mic", head: undefined, deprel: "dobj" }),
-                4: new ConnllU({id: 4, form: ".", head: undefined, deprel: "punct" })
+                3: new ConnllU({id: 3, form: "mic", head: 1, deprel: "dobj" }),
+                4: new ConnllU({id: 4, form: ".", head: 1, deprel: "punct" })
             }
         });
     }
