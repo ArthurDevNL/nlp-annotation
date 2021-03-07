@@ -70,12 +70,12 @@ class App extends React.Component {
 
     setTokens() {
         this.setState({
-            tokens: [
-                new ConnllU({id: 1, form: "Drop", head: 0, deprel: "root" }),
-                new ConnllU({id: 2, form: "the", head: 3, deprel: "det" }),
-                new ConnllU({id: 3, form: "mic", head: 1, deprel: "dobj" }),
-                new ConnllU({id: 4, form: ".", head: 1, deprel: "punct" })
-            ]
+            tokens: {
+                1: new ConnllU({id: 1, form: "Drop", head: 0, deprel: "root" }),
+                2: new ConnllU({id: 2, form: "the", head: 3, deprel: "det" }),
+                3: new ConnllU({id: 3, form: "mic", head: undefined, deprel: "dobj" }),
+                4: new ConnllU({id: 4, form: ".", head: undefined, deprel: "punct" })
+            }
         });
     }
 
