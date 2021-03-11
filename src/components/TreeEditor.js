@@ -45,6 +45,7 @@ class TreeEditor extends React.Component {
                 selectedToken: undefined,
                 tokens: tokens
             });
+            this.props.onTokensUpdated(tokens);
         } else {
             this.setState({
                 selectedToken: tokenId
@@ -59,6 +60,7 @@ class TreeEditor extends React.Component {
         t.deprel = undefined;
         tokens[id] = t;
         this.setState({tokens: tokens});
+        this.props.onTokensUpdated(tokens);
     }
 
     isHovered(id) {
@@ -203,7 +205,14 @@ class TreeEditor extends React.Component {
                             toPoint = toToken.x + (toToken.width / numRelations) * (toIndex);
                         }
 
+                        if (token.deprel === undefined) {
+                            return;
+                        }
                         var relation = this.props.relations.filter((r) => r.label.toLowerCase() === token.deprel.toLowerCase())[0];
+
+                        if (relation === undefined) {
+                            return;
+                        }
                         const labelPosition = (fromPoint + toPoint + (relation.label.length * -7.5)) / 2
 
                         var color = relation.color;

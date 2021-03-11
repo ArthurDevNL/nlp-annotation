@@ -5,7 +5,10 @@ export default function PlainTextEditor(props) {
                 <div className="separator__add" onClick={props.addToken}></div>
                 <div className="separator__drag"></div>
             </div>
-            <textarea className="text-editor__textarea"></textarea>
+            <textarea 
+                onChange={props.onTextChanged}
+                className="text-editor__textarea"
+                value={props.text}></textarea>
         </div>
     );
 }

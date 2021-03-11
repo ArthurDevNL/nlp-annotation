@@ -23,6 +23,22 @@ class ConnllU {
     deps?: string = undefined;
     misc?: string = undefined;
 
+    toString() {
+        var items = [this.id, this.form, this.lemma, this.upos, this.xpos, this.feats, this.head, this.deprel, this.deps, this.misc];
+        var s = "";
+        items.forEach((x,i) => {
+            s += `${this.format(x)}`
+            if (i !== items.length - 1) {
+                s += " ";
+            }
+        });
+        return s;
+    }
+
+    format(s?: any) {
+        return s === undefined || s === "" ? "_" : s;
+    }
+
     constructor(props: ConnllUFields) {
         this.id = props.id;
         this.form = props.form;

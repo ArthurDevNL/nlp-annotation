@@ -22,6 +22,8 @@ class App extends React.Component {
         this.handleRelationSelect = this.handleRelationSelect.bind(this);
         this.addToken = this.addToken.bind(this);
         this.onResize = this.onResize.bind(this);
+        this.onTokensUpdated = this.onTokensUpdated.bind(this);
+        this.onTextChanged = this.onTextChanged.bind(this);
         this.state = {
             relations: [
                 {
@@ -69,14 +71,82 @@ class App extends React.Component {
         this.setTokens();
     }
 
-    setTokens() {
+    onTokensUpdated(tokens) {
         this.setState({
-            tokens: {
-                1: new ConnllU({id: 1, form: "Drop", head: 0, deprel: "root" }),
-                2: new ConnllU({id: 2, form: "the", head: 3, deprel: "det" }),
-                3: new ConnllU({id: 3, form: "mic", head: 1, deprel: "dobj" }),
-                4: new ConnllU({id: 4, form: ".", head: 1, deprel: "punct" })
+            tokens: tokens,
+            text: this.tokensToText(tokens)
+        });
+    }
+
+    tokensToText(tokens) {
+        var text = "";
+        Object.keys(tokens).forEach(tid => {
+            var t = tokens[tid];
+            text += t.toString() + "\n";
+        });
+        return text;
+    }
+
+    parseText(text) {
+        var lines = text.split('\n');
+        var tokens = {};
+        lines.forEach((l, i) => {
+            var hasError = false;
+            var comps = l.split(' ');
+            if (comps.length !== 10) {
+                hasError = true;
+                // console.log("Error on line ", i);
+                // TODO: display error
             }
+            var id = parseInt(comps[0]);
+            if (tokens[id] !== undefined) {
+                hasError = true;
+                // console.log("Duplicate token for id ", id);
+                // TODO: display error
+            }
+
+            if (hasError == false) {
+                tokens[id] = new ConnllU({
+                    id: id,
+                    form: this.parseField(comps[1]),
+                    lemma: this.parseField(comps[2]),
+                    upos: this.parseField(comps[3]),
+                    xpos: this.parseField(comps[4]),
+                    feats: this.parseField(comps[5]),
+                    head: parseInt(this.parseField(comps[6])),
+                    deprel: this.parseField(comps[7]),
+                    deps: this.parseField(comps[8]),
+                    misc: this.parseField(comps[9]),
+                });
+            }
+        });
+        return tokens;
+    }
+
+    parseField(f) {
+        if (f === "_") {
+            return undefined;
+        }
+        return f;
+    }
+
+    setTokens() {
+        var startTokens = {
+            1: new ConnllU({id: 1, form: "Drop", head: 0, deprel: "root" }),
+            2: new ConnllU({id: 2, form: "the", head: 3, deprel: "det" }),
+            3: new ConnllU({id: 3, form: "mic", head: 1, deprel: "dobj" }),
+            4: new ConnllU({id: 4, form: ".", head: 1, deprel: "punct" })
+        };
+        this.setState({
+            tokens: startTokens,
+            text: this.tokensToText(startTokens)
+        });
+    }
+
+    onTextChanged(event) {
+        this.setState({
+            text: event.target.value,
+            tokens: this.parseText(event.target.value)
         });
     }
 
@@ -89,16 +159,14 @@ class App extends React.Component {
     }
 
     addToken(e, word) {
-        // word = word ? word : 'new';
-        // this.setState(prevState => {
-        //     let tokens = [...prevState.tokens];
-        //     tokens.push(new ConnllU({id: tokens.length, form: word}));
-        //     const wordsText = tokens.map(token => token.form);
-        //     return {
-        //         sentence: wordsText.join(' '),
-        //         tokens: tokens
-        //     };
-        // })
+        var tokens = this.state.tokens;
+        var maxId = Math.max.apply(Math, Object.keys(tokens).map(tid => parseInt(tid)));
+        var newId = maxId + 1;
+        tokens[newId] = new ConnllU({ id: maxId + 1, form: "new"});
+        this.setState({
+            tokens: tokens,
+            text: this.tokensToText(tokens)
+        });
     }
 
     render() {
@@ -121,10 +189,12 @@ class App extends React.Component {
                         singleRelation={this.state.singleRelation}
                         relations={this.state.relations}
                         height={this.state.treeHeight}
+                        onTokensUpdated={this.onTokensUpdated}
                         className="split-pane--top"
                     />
                     <PlainTextEditor
-                        sentence={this.state.sentence}
+                        text={this.state.text}
+                        onTextChanged={this.onTextChanged}
                         addToken={this.addToken}>
                     </PlainTextEditor>
                 </SplitPane>
