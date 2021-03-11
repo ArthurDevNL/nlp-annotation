@@ -91,10 +91,15 @@ class TreeEditor extends React.Component {
         let tokenArcs = {};
         Object.keys(this.props.tokens).forEach((tid) => {
             let t = this.props.tokens[tid];
+            if (tokenArcs[tid] === undefined) {
+                tokenArcs[tid] = [];
+            }
             if (tokenArcs[t.head] === undefined) {
-                tokenArcs[t.head] = [tid];
-            } else {
+                tokenArcs[t.head] = [];
+            }
+            if (t.head !== undefined) {
                 tokenArcs[t.head].push(tid);
+                tokenArcs[tid].push(tid);
             }
         });
 
@@ -106,9 +111,8 @@ class TreeEditor extends React.Component {
             let rectLength = 20;
             if (token.form && ctx) {
                 ctx.font = "18px Arial";
-                rectLength = Math.round(ctx.measureText(token.form).width);
+                rectLength = Math.round(ctx.measureText(token.form).width) + 5;
             }
-            console.log(rectLength);
 
             tokenPositions[token.id] = {
                 x: totalTreeLength,
@@ -186,12 +190,17 @@ class TreeEditor extends React.Component {
                         arcHeight += arcIncrement;
                         
                         var fromToken = tokenPositions[tid];
+                        
+                        var numRelations = tokenArcs[tid].length;
+                        var fromIndex = tokenArcs[tid].indexOf(String(tid))+1;
+                        var fromPoint = fromToken.x + (fromToken.width / numRelations) * fromIndex;
 
-                        var fromPoint = fromToken.x + fromToken.width;
                         var toPoint = fromPoint;
                         if (token.head !== undefined && this.props.tokens[token.head] !== undefined) {
                             var toToken = tokenPositions[token.head];
-                            toPoint = toToken.x + toToken.width / 2;
+                            var numRelations = tokenArcs[token.head].length;
+                            var toIndex = tokenArcs[token.head].indexOf(String(token.id))+1;
+                            toPoint = toToken.x + (toToken.width / numRelations) * (toIndex);
                         }
 
                         var relation = this.props.relations.filter((r) => r.label.toLowerCase() === token.deprel.toLowerCase())[0];
