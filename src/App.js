@@ -92,7 +92,7 @@ class App extends React.Component {
         var tokens = {};
         lines.forEach((l, i) => {
             var hasError = false;
-            var comps = l.split(' ');
+            var comps = l.split('\t');
             if (comps.length !== 10) {
                 hasError = true;
                 // console.log("Error on line ", i);

@@ -29,7 +29,7 @@ class ConnllU {
         items.forEach((x,i) => {
             s += `${this.format(x)}`
             if (i !== items.length - 1) {
-                s += " ";
+                s += "\t";
             }
         });
         return s;
