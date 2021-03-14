@@ -28,11 +28,14 @@ code {
 ================================ */
 .nav {
     display: flex;
+    justify-content: left;
+    flex-wrap: wrap;
     position: relative;
     z-index: 10;
-    align-items: center;
-    padding: 11px 13px;
-    max-height: 59px;
+    align-items: flex-start;
+    align-content: flex-start;
+    padding: 6px 8px;
+    max-height: auto;
     background-color: var(--red);
 }
 
@@ -50,9 +53,10 @@ code {
     height: 38px;
     background-color: var(--red);
     color: var(--white);
-    padding: 7.5px 18px;
+    padding: 6px;
+    margin: 5px 1px 1px 1px;
     font-weight: 600;
-    font-size: 18px;
+    font-size: 16px;
 }
 .token:hover,
 .token:active,
@@ -72,7 +76,7 @@ code {
 ================================ */
 .text-editor {
     text-align: initial;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 18px;
     font-family: "Courier New", Courier, monospace;
     background-color: white;
@@ -81,7 +85,7 @@ code {
 .text-editor__text-input {
     width: 50%;
     border: 0;
-    font-size: 1em;
+    font-size: 2em;
 }
 .text-editor__row {
     margin-bottom: 0.2em;
@@ -93,6 +97,7 @@ code {
     padding: 15px;
     border: 0;
     line-height: 18px;
+    font-size: 16px;
 }
 
 

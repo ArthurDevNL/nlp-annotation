@@ -45,16 +45,118 @@ class App extends React.Component {
                     id: 2
                 },
                 {
-                    label: 'PUNCT',
-                    color: color.blue,
+                    label: 'IOBJ',
+                    color: color.green,
                     fontColor: color.white,
                     id: 3
                 },
                 {
-                    label: 'DET',
-                    color: color.orange,
+                    label: 'CSUBJ',
+                    color: color.green,
                     fontColor: color.white,
                     id: 4
+                },
+                {
+                    label: 'CCOMP',
+                    color: color.green,
+                    fontColor: color.white,
+                    id: 5
+                },
+                {
+                    label: 'XCOMP',
+                    color: color.green,
+                    fontColor: color.white,
+                    id: 6
+                },
+                {
+                    label: 'AUX',
+                    color: color.green,
+                    fontColor: color.white,
+                    id: 7
+                },
+                {
+                    label: 'ADVCL',
+                    color: color.green,
+                    fontColor: color.white,
+                    id: 8
+                },
+                {
+                    label: 'ADVMOD',
+                    color: color.green,
+                    fontColor: color.white,
+                    id: 9
+                },
+                {
+                    label: 'COP',
+                    color: color.green,
+                    fontColor: color.white,
+                    id: 10
+                },
+                {
+                    label: 'MARK',
+                    color: color.green,
+                    fontColor: color.white,
+                    id: 11
+                },
+                {
+                    label: 'NMOD',
+                    color: color.green,
+                    fontColor: color.white,
+                    id: 12
+                },
+                {
+                    label: 'APPOS',
+                    color: color.green,
+                    fontColor: color.white,
+                    id: 13
+                },
+                {
+                    label: 'NUMMOD',
+                    color: color.green,
+                    fontColor: color.white,
+                    id: 14
+                },
+                {
+                    label: 'ACL',
+                    color: color.green,
+                    fontColor: color.white,
+                    id: 15
+                },
+                {
+                    label: 'AMOD',
+                    color: color.green,
+                    fontColor: color.white,
+                    id: 16
+                },
+                {
+                    label: 'DET',
+                    color: color.green,
+                    fontColor: color.white,
+                    id: 17
+                },
+                {
+                    label: 'CASE',
+                    color: color.green,
+                    fontColor: color.white,
+                    id: 18
+                },
+                {
+                    label: 'CC',
+                    color: color.green,
+                    fontColor: color.white,
+                    id: 19
+                },
+                {
+                    label: 'CONJ',
+                    color: color.green,
+                    fontColor: color.white,
+                    id: 20
+                },
+                {
+                    label: 'PUNCT',
+                    color: color.blue,
+                    fontColor: color.white,
+                    id: 21
                 },
             ],
             singleRelation: [0], // which token don't need to pair with other // id
@@ -132,10 +234,16 @@ class App extends React.Component {
 
     setTokens() {
         var startTokens = {
-            1: new ConnllU({id: 1, form: "Drop", head: 0, deprel: "root" }),
-            2: new ConnllU({id: 2, form: "the", head: 3, deprel: "det" }),
-            3: new ConnllU({id: 3, form: "mic", head: 1, deprel: "dobj" }),
-            4: new ConnllU({id: 4, form: ".", head: 1, deprel: "punct" })
+            1: new ConnllU({id: 1, form: "The", lemma: "the", upos: "DET", xpos: "DT", head: 5, deprel: "det" }),
+            2: new ConnllU({id: 2, form: "quick", lemma: "quick", upos: "ADJ", xpos: "JJ", feats: "Degree=pos", head: 5, deprel: "amod" }),
+            3: new ConnllU({id: 3, form: "brown", lemma: "brown", upos: "ADJ", xpos: "JJ", feats: "Degree=pos", head: 5, deprel: "amod" }),
+            4: new ConnllU({id: 4, form: "fox", lemma: "fox", upos: "NOUN", xpos: "NN", feats: "Number=sing", head: 5, deprel: "compound" }),
+            5: new ConnllU({id: 5, form: "jumps", lemma: "jump", upos: "NOUN", xpos: "NNS", feats: "Number=plur", head: 0, deprel: "root" }),
+            6: new ConnllU({id: 6, form: "over", lemma: "over", upos: "ADP", xpos: "IN", head: 5, deprel: "prep" }),
+            7: new ConnllU({id: 7, form: "the", lemma: "the", upos: "DET", xpos: "DT", head: 9, deprel: "det" }),
+            8: new ConnllU({id: 8, form: "lazy", lemma: "lazy", upos: "ADJ", xpos: "JJ", feats: "Degree=pos", head: 9, deprel: "amod" }),
+            9: new ConnllU({id: 9, form: "dog", lemma: "dog", upos: "NOUN", xpos: "NN", feats: "Number=sing", head: 6, deprel: "pobj", misc: "SpaceAfter=No" }),
+            10: new ConnllU({id: 10, form: ".", lemma: ".", upos: "PUNCT", xpos: ".", feats: "PunctType=peri", head: 5, deprel: "punct", misc: "SpaceAfter=No" })
         };
         this.setState({
             tokens: startTokens,

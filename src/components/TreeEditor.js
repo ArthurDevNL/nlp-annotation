@@ -16,7 +16,7 @@ class TreeEditor extends React.Component {
             hoveredToken: null,
             hoveredArc: null,
             config: {
-                y: 200,
+                y: 400,
                 arcHeight: -50,
                 arcHeightIncrement: -20,
                 arcTension: 0,
@@ -209,19 +209,23 @@ class TreeEditor extends React.Component {
                             return;
                         }
                         var relation = this.props.relations.filter((r) => r.label.toLowerCase() === token.deprel.toLowerCase())[0];
+                        
+                        var color = '#D2D2D2';
+                        var fontColor = '#343434';
+                        var label = token.deprel;
 
-                        if (relation === undefined) {
-                            return;
+                        if (relation !== undefined) {
+                            color = relation.color;
+                            fontColor = relation.fontColor;
+                            label = relation.label;
                         }
-                        const labelPosition = (fromPoint + toPoint + (relation.label.length * -7.5)) / 2
+                        const labelPosition = (fromPoint + toPoint + (label.length * -7.5)) / 2
 
-                        var color = relation.color;
-                        var fontColor = relation.fontColor;
                         return (
                             <Group
                                 key={`arc-${tid}-${token.head}`}
                                 x={0}
-                                y={200}>
+                                y={this.state.config.y}>
                                 <Arrow
                                     points={[
                                         fromPoint, 0,
@@ -248,7 +252,7 @@ class TreeEditor extends React.Component {
                                         padding={2}    
                                         fontSize={10}
                                         fontStyle="bold"
-                                        text={`${relation.label}`}/>
+                                        text={`${label}`}/>
                                 </Label>
                             </Group>
                         )})}
