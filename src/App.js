@@ -33,10 +33,18 @@ class App extends React.Component {
                     id: 0 // same with array index
                 },
                 {
-                    label: 'NSUBJ',
+                    label: 'RELATION',
                     color: color.red,
                     fontColor: color.white,
                     id: 1
+                },
+            ],
+            colors: [
+                {
+                    label: 'ROOT',
+                    color: color.black, // default grey: #D2D2D2
+                    fontColor: color.white, // default black: #343434
+                    id: 0 // same with array index
                 },
                 {
                     label: 'DOBJ',
@@ -296,6 +304,7 @@ class App extends React.Component {
                         arcs={this.state.arcs}
                         singleRelation={this.state.singleRelation}
                         relations={this.state.relations}
+                        colors={this.state.colors}
                         height={this.state.treeHeight}
                         onTokensUpdated={this.onTokensUpdated}
                         className="split-pane--top"

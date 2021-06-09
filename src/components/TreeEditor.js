@@ -208,7 +208,7 @@ class TreeEditor extends React.Component {
                         if (token.deprel === undefined) {
                             return;
                         }
-                        var relation = this.props.relations.filter((r) => r.label.toLowerCase() === token.deprel.toLowerCase())[0];
+                        var relation = this.props.colors.filter((r) => r.label.toLowerCase() === token.deprel.toLowerCase())[0];
                         
                         var color = '#D2D2D2';
                         var fontColor = '#343434';
